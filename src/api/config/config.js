@@ -16,7 +16,8 @@ module.exports = {
     'luckdraw',
     'stylist',
     'plan',
-    'stylename'
+    'stylename',
+    'wxcard'
   ],
 
   // 可以公开访问的Action

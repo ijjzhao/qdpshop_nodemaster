@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@alicloud/sms-sdk": "^1.0.8",
+    "axios": "^0.18.0",
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
