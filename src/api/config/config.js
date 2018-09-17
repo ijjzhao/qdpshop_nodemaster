@@ -13,7 +13,10 @@ module.exports = {
     'region',
     'feedback',
     'bargain',
-    'luckdraw'
+    'luckdraw',
+    'stylist',
+    'plan',
+    'stylename'
   ],
 
   // 可以公开访问的Action
