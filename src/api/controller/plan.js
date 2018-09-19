@@ -149,6 +149,7 @@ module.exports = class extends Base {
     let id = this.get('planid');
     await this.model('plan').where({ id }).delete();
     await this.model('plan_item').where({ plan_id: id }).delete();
+    this.service('qiniu', 'api').delete(id);
     this.success()
   }
 

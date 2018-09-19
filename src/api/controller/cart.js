@@ -229,7 +229,7 @@ module.exports = class extends Base {
         market_price: productInfo.retail_price,
         goods_specifition_name_value: goodsSepcifitionValue.join(';'),
         goods_specifition_ids: productInfo.goods_specification_ids,
-        checked: 0,
+        checked: 1,
         freight_price: goodsInfo.freight_price,
         freight_template: goodsInfo.freight_template,
         freight_type: goodsInfo.freight_type,

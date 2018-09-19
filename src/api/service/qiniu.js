@@ -3,7 +3,7 @@ const qiniu = require('qiniu');
 module.exports = class extends think.Service {
   async upload(filePath, filename, overwrite = false) {
     var config = new qiniu.conf.Config();
-    let key = 'img/plan/' + filename;
+    let key = think.config('qiniu.key') + filename;
 
     config.zone = qiniu.zone.Zone_z0; // 空间对应的机房
 
@@ -59,5 +59,32 @@ module.exports = class extends think.Service {
       });
     })
 
+  }
+
+  async delete(id) {
+    var config = new qiniu.conf.Config();
+    let key = `${think.config('qiniu.key')}${id}.png`;
+    config.zone = qiniu.zone.Zone_z0; // 空间对应的机房
+
+    // 七牛提供的公钥
+    const accessKey = think.config('qiniu.accessKey')
+    // 七牛提供的私钥
+    const secretKey = think.config('qiniu.secretKey')
+    // 存储空间名
+    const bucketName = think.config('qiniu.bucketName')
+
+    var mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
+    var bucketManager = new qiniu.rs.BucketManager(mac, config);
+
+    bucketManager.delete(bucketName, key, function(err, respBody, respInfo) {
+      if (err) {
+        console.log(err);
+        //throw err;
+      } else {
+        console.log(respInfo.statusCode);
+        console.log(respBody);
+      }
+    });
+    
   }
 }
