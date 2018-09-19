@@ -58,6 +58,7 @@ module.exports = class extends Base {
         z: goods.z,
         w: goods.w,
         h: goods.h,
+        url: goods.url,
         product_id: goods.product_id,
         enabled: goods.enabled
       })
@@ -108,6 +109,7 @@ module.exports = class extends Base {
         z: goods.z,
         w: goods.w,
         h: goods.h,
+        url: goods.url,
         product_id: goods.product_id,
         enabled: goods.enabled
       })

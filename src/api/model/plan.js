@@ -6,7 +6,7 @@ module.exports = class extends think.Model {
     for (let i in items) {
       let item = items[i];
       let goods = await this.model('goods').where({id: item.goods_id}).field(['list_pic_url', 'name', 'retail_price']).find();
-      item.url = goods.list_pic_url;
+      item.url = item.url ? item.url : goods.list_pic_url;
       item.name = goods.name;
       item.retail_price = goods.retail_price;
     }

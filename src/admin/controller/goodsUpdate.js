@@ -129,6 +129,7 @@ module.exports = class extends Base {
     const oldtitle = this.post('oldtitle')
     const value = this.post('value')
     const unDeacartesList = this.post('unDeacartesList')
+    const imageMap = this.post('imageMap')
     // console.log(id);
     console.log(title);
     console.log(oldtitle);
@@ -147,6 +148,16 @@ module.exports = class extends Base {
             await this.model('specification').where({id: changetitleid.id}).update({name: title[a]})
           }
         }
+        
+        // 没有改值的情况下 改图片地址
+        let specifications = await this.model('goods_specification').where({goods_id: id}).select();
+        for (let i in specifications) {
+          let specification = specifications[i];
+          if (imageMap[specification.value]) {
+            await this.model('goods_specification').where({id: specification.id}).update({pic_url: imageMap[specification.value]});
+          }
+        }
+        // 改图片地址结束
         console.log('-循环匹配规格名结束******************************************************************');
         return this.fail(200,'用户没有更新商品规格 ！')
       }else {
@@ -175,10 +186,13 @@ module.exports = class extends Base {
           let second_row = []
           for (var k = 0; k < unDeacartesList[j].length; k++) {
             oneD_rowlist.push(unDeacartesList[j][k])
-            await this.model('goods_specification').add({
+            let addJson = {
               goods_id: id,
               specification_id:specifications_Title[j].id,
-              value:unDeacartesList[j][k] })
+              value:unDeacartesList[j][k] }
+            if (imageMap[addJson.value] != undefined) addJson.pic_url = imageMap[addJson.value]
+            await this.model('goods_specification').add(addJson)
+              think.logger.debug(unDeacartesList[j][k]);
             const addspec = await this.model('goods_specification').where({
               goods_id: id,
               specification_id:specifications_Title[j].id,
