@@ -202,14 +202,14 @@ module.exports = class extends Base {
 
     // const actualPrice = rlPrice
     // console.log(parseInt(couponId));
-    if (parseInt(couponId) == 0) {
+    if (couponId == 0) {
       // let checkcup = []
       console.log('没有选择优惠券');
     }else {
       console.log('选择了优惠券');
       // let checkcup = await this.model('coupon_user').where({user_id: userId,coupon_id:couponId}).find()
     }
-    const checkedcouponlist = parseInt(couponId) == 0 ? [] : await this.model('coupon_user').where({coupon_id:couponId}).find()
+    const checkedcouponlist = couponId == 0 ? [] : await this.model('coupon_user').where({coupon_id:couponId}).find()
     console.log(checkedcouponlist);
     const currentTime = new Date().getTime()
     for (var p = 0;p < GoodsList.length; p++){
@@ -218,7 +218,7 @@ module.exports = class extends Base {
         goods_number:parseInt(product.goods_number) - 1
       })
     }
-    let couponUpdate = parseInt(couponId) == 0 ? '' : await this.model('coupon_user').where({coupon_id:couponId}).update({
+    let couponUpdate = couponId == 0 ? '' : await this.model('coupon_user').where({coupon_id:couponId}).update({
       used_type: 1,
       used_time: new Date().getTime()
     })

@@ -35,3 +35,5 @@ app/
 apiclient_cert.p12
 config.development.js
 adapter.development.js
+
+www/

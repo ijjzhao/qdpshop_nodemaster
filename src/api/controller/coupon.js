@@ -8,7 +8,7 @@ module.exports = class extends Base {
       // point_user:''
     }).select()
     let list = []
-    console.log(list);
+    // console.log(list);
     for (var i = 0; i < listall.length; i++) {
       if (listall[i].point_user !== '') {
         var userid = listall[i].point_user
@@ -25,10 +25,10 @@ module.exports = class extends Base {
     }
     for (var i = 0; i < list.length; i++) {
       if (list[i].point_goods !== '') {
-        console.log(list[i].point_goods);
+        // console.log(list[i].point_goods);
         var goodsid = list[i].point_goods
         let goodsidlist = goodsid.split(',')
-        console.log(goodsidlist);
+        // console.log(goodsidlist);
         let goods = []
         for (var k = 0; k < goodsidlist.length; k++) {
           let obj = {}
@@ -58,7 +58,7 @@ module.exports = class extends Base {
   async usergetAction() {
     const id = this.post('id')
     const coupon_main = await this.model('coupon_main').where({coupon_id:id}).find()
-    console.log(coupon_main);
+    // console.log(coupon_main);
     const have = await this.model('coupon_user').where({coupon_id:id,user_id:think.userId}).select()
     if (have.length !== 0) {
       return this.fail(217,'已存在！')
@@ -84,7 +84,7 @@ module.exports = class extends Base {
         point_user:coupon_main.point_user,
         Instructions:coupon_main.Instructions
       })
-      console.log(coupon_user_id);
+      // console.log(coupon_user_id);
       const coupon_user = await this.model('coupon_user').where({id:coupon_user_id}).find()
       return this.success(coupon_user)
     }
@@ -98,10 +98,10 @@ module.exports = class extends Base {
     let usedlist = []
     for (var i = 0; i < list.length; i++) {
       if (list[i].point_goods !== '') {
-        console.log(list[i].point_goods);
+        // console.log(list[i].point_goods);
         var goodsid = list[i].point_goods
         let goodsidlist = goodsid.split(',')
-        console.log(goodsidlist);
+        // console.log(goodsidlist);
         let goods = []
         for (var k = 0; k < goodsidlist.length; k++) {
           // array[i]
@@ -116,7 +116,7 @@ module.exports = class extends Base {
       }
       // console.log();
       if (list[i].validity_end <= new Date().getTime() || list[i].used_type == 2) {
-        console.log("已过期");
+        // console.log("已过期");
         await this.model('coupon_user').where({id:list[i].id}).update({
           used_type:2
         })
@@ -176,8 +176,8 @@ module.exports = class extends Base {
 // }
   async findAction() {
     const id = this.post('couponId')
-    console.log(id);
-    if (parseInt(id) == 0) {
+    console.log(`couponId: ${id}`);
+    if (id == 0) {
       return this.success({
         couponList: 0
       })
@@ -192,8 +192,8 @@ module.exports = class extends Base {
   async checkcuplistAction(){
     const price = this.post('price')
     const idList = this.post('idList')
-    console.log(price);
-    console.log(idList);
+    // console.log(price);
+    // console.log(idList);
     const list = await this.model('coupon_user').where({user_id:think.userId}).select()
     // console.log(list);
     let unablelist = []
@@ -225,7 +225,7 @@ module.exports = class extends Base {
         ablelist.push(list[i])
       }
     }
-    console.log(ablelist);
+    // console.log(ablelist);
     let extlimit = []
     for (var l = 0; l < ablelist.length; l++) {
       if (parseInt(ablelist[l].coupon_limit_value * 1000 / 1) >= parseInt(price * 1000)) {
@@ -234,13 +234,13 @@ module.exports = class extends Base {
         extlimit.push(ablelist[l])
       }
     }
-    console.log("extlimit"+extlimit);
+    // console.log("extlimit"+extlimit);
     let finall = []
     let finallall = []
     for (var m = 0; m < extlimit.length; m++) {
       if (extlimit[m].point_goods == "") {
         finallall.push(extlimit[m])
-        console.log('没有指定商品');
+        // console.log('没有指定商品');
       }else {
         for (var n = 0; n < extlimit[m].goods.length; n++) {
           for (var o = 0; o < idList.length; o++) {
@@ -252,7 +252,7 @@ module.exports = class extends Base {
       }
     }
     // console.log("999999999999999999999999999999999999999");
-    console.log(finallall);
+    // console.log(finallall);
     // finallall = finall
     // return this.success(finall)
     return this.success({

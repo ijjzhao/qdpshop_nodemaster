@@ -4,7 +4,9 @@ module.exports = {
   workers: 1,
   weixin: {
     appid: 'wx703fd25a2cfce741', // 小程序 appid
-    secret: 'df6f71acbff56fddf7ad1c027786c6d1', // 小程序密钥
+    secret: 'df6f71acbff56fddf7ad1c027786c6d1', // 小程序密钥,
+    cardAppid: 'wx126f0a81ea45ed09', // 公众号 appid // wx126f0a81ea45ed09：测试
+    cardSecret: 'd5aeee43b096218c102fd680a6114d1b', // 公众号密钥,
     mch_id: '', // 商户帐号ID
     partner_key: '', // 微信支付密钥
     notify_url: '' // 微信异步通知，
@@ -25,7 +27,7 @@ module.exports = {
     bucketName: 'collocate', // 存储空间名,
     key: 'img/planTest/'
   },
-  SMSClient: { //阿里云通信基础能力业务短信发送 德威商城
+  SMSClient: { //阿里云通信基础能力业务短信发送
     accessKeyId: 'accessKeyId',
     secretAccessKey: 'secretAccessKey',
     SignatureName: '',

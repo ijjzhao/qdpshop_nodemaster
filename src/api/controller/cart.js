@@ -393,17 +393,17 @@ module.exports = class extends Base {
     const addressId = this.post('addressId') == 0 ? '' : this.post('addressId'); // 收货地址id
     const couponId = this.post('couponId'); // 使用的优惠券id
     const userId = this.post('userId')
-    console.log('**************************用户id');
-    console.log(userId);
-    console.log(couponId);
-    console.log(addressId);
+    // console.log('**************************用户id');
+    // console.log(userId);
+    // console.log(couponId);
+    // console.log(addressId);
     // console.log(parseInt(couponId))
     // if (typeof(couponId) == "NaN") {
     //   console.log("123456789");
     // }
     // 选择的收货地址
     const addressInfo = await this.model('address').where({user_id: userId}).select();
-    console.log(addressInfo);
+    // console.log(addressInfo);
     let checkedAddress = new Array();
     if (think.isEmpty(addressId)) {
         // let abc = "123"
@@ -429,7 +429,7 @@ module.exports = class extends Base {
     // 获取要购买的商品
     const cartData = await this.getCart();
     const is_Identity = cartData.cartTotal.Identity == 0 ? 0 : 1
-    console.log('供货商*************************************');
+    // console.log('供货商*************************************');
     // let supplier_list = []
     // for (var d = 0; d < cartData.cartTotal.supplier_ids.length; d++) {
       // let obj = await this.model('supplier').where({id:cartData.cartTotal.supplier_ids[d]}).find()
@@ -451,7 +451,7 @@ module.exports = class extends Base {
     });//运费模板的商品
 
     // 根据收货地址计算运费
-    console.log("******************************************************************");
+    // console.log("******************************************************************");
     //计算运费
     console.log('以下为统一运费的商品');
     if (checkedGoodsList.length > 0) {
@@ -460,13 +460,13 @@ module.exports = class extends Base {
       for (var i = 0; i < ordinaryFreightGoods.length; i++) {
         ordinaryFreightGoods_Fright = Number(ordinaryFreightGoods[i].freight_price) * Number(ordinaryFreightGoods[i].number) + Number(ordinaryFreightGoods_Fright)
       }
-      console.log('以下为统一运费商品运费总和');
-      console.log(ordinaryFreightGoods_Fright);
-      console.log('以下为用户选择的收货地址的省');
-      console.log(checkedAddress.province_id);
-      console.log('以下为使用运费模板的商品');
-      // console.log(templeteFreightGoods);
-      console.log('以下为模板商品的运费模板主表');
+      // console.log('以下为统一运费商品运费总和');
+      // console.log(ordinaryFreightGoods_Fright);
+      // console.log('以下为用户选择的收货地址的省');
+      // console.log(checkedAddress.province_id);
+      // console.log('以下为使用运费模板的商品');
+      // // console.log(templeteFreightGoods);
+      // console.log('以下为模板商品的运费模板主表');
 
       let templeteFreightGoods_templete_id_no_repeating = [] //使用了运费模板的商品的模板id没有去除重复
       for (var k = 0; k < templeteFreightGoods.length; k++) {
@@ -478,7 +478,7 @@ module.exports = class extends Base {
       let templeteFreightGoods_templete_id_repeating = templeteFreightGoods_templete_id_no_repeating.filter(function (element, index, array) {
           return array.indexOf(element) === index;
       });
-      console.log(templeteFreightGoods_templete_id_repeating); //去重
+      // console.log(templeteFreightGoods_templete_id_repeating); //去重
       let templeteFreightGoods_templete = [] //匹配到的运费模板规则
       for (var m = 0; m < templeteFreightGoods_templete_id_repeating.length; m++) {
         const obj = await this.model('freight_template_main').where({id:templeteFreightGoods_templete_id_repeating[m]}).find()
@@ -486,7 +486,7 @@ module.exports = class extends Base {
         obj.rules_list = rules_list
         templeteFreightGoods_templete.push(obj)
       }
-      console.log('以下为匹配到的运费模板');
+      // console.log('以下为匹配到的运费模板');
       // console.log(templeteFreightGoods_templete);
       let all_templeteFreightGoods_templete_rules = []
       for (var n = 0; n < templeteFreightGoods_templete.length; n++) {
@@ -494,7 +494,7 @@ module.exports = class extends Base {
           all_templeteFreightGoods_templete_rules.push(templeteFreightGoods_templete[n].rules_list[o])
         }
       }
-      console.log('以下为所有模板的规则');
+      // console.log('以下为所有模板的规则');
       for (var p = 0; p < all_templeteFreightGoods_templete_rules.length; p++) {
         let point_id_list = []
         all_templeteFreightGoods_templete_rules[p].point_id_list = all_templeteFreightGoods_templete_rules[p].temp_point_city_id.split(',').map(num=>Number(num))
@@ -506,7 +506,7 @@ module.exports = class extends Base {
           all_in_rules_list.push(all_templeteFreightGoods_templete_rules[q])
         }
       }
-      console.log('以下为存在省的所有规则');
+      // console.log('以下为存在省的所有规则');
       // console.log(all_in_rules_list);
       let fail_userd_point = all_in_rules_list[0] //最终使用的规则
       for (var r = 0; r < all_in_rules_list.length; r++) {
@@ -514,32 +514,32 @@ module.exports = class extends Base {
           fail_userd_point = all_in_rules_list[r]
         }
       }
-      console.log("*************最终使用的规则");
-      console.log(fail_userd_point);
+      // console.log("*************最终使用的规则");
+      // console.log(fail_userd_point);
       let templeteFreightGoods_freight = 0.00
       let fail_num = templeteFreightGoods_templete_id_no_repeating.length
       // console.log(Number(fail_userd_point.temp_first_freight));
       // console.log(Number(fail_num - 1 ) / Number(fail_userd_point.temp_continue_weight) * Number(fail_userd_point.temp_continue_freight));
       templeteFreightGoods_freight = all_in_rules_list.length == 0 ? 0.00 : Number(fail_userd_point.temp_first_freight) +
       Number((Number(fail_num - 1 ) / Number(fail_userd_point.temp_continue_weight) * Number(fail_userd_point.temp_continue_freight)).toFixed(2))
-      console.log("老子才是运费模板的总运费啊 智障!!!!");
-      console.log(templeteFreightGoods_freight);
+      // console.log("老子才是运费模板的总运费啊 智障!!!!");
+      // console.log(templeteFreightGoods_freight);
       let fail_order_freight = Number(ordinaryFreightGoods_Fright) + Number(templeteFreightGoods_freight)
-      console.log('终于等到你,最终运费');
-      console.log(fail_order_freight);
+      // console.log('终于等到你,最终运费');
+      // console.log(fail_order_freight);
       let freightPriceNoRules = Number(fail_order_freight).toFixed(2)
       // 获取可用的优惠券信息，功能还示实现
       let goodsTotalPriceNoRules = cartData.cartTotal.checkedGoodsAmount; // 商品总价
-      console.log('未经过价格计算规则的订单总价');
-      console.log(goodsTotalPriceNoRules);
+      // console.log('未经过价格计算规则的订单总价');
+      // console.log(goodsTotalPriceNoRules);
       const freightPrice = freightPriceNoRules
       const goodsTotalPrice = goodsTotalPriceNoRules
 
-      console.log("////////////////////////////////////////////////////////////////////////");
-      console.log('进入全场价格计算规则');
+      // console.log("////////////////////////////////////////////////////////////////////////");
+      // console.log('进入全场价格计算规则');
       let rules_value = '无'
       let rules_list = await this.model('cart_rules').where({rules_suit:0,is_abled:1}).find()
-      console.log(rules_list);
+      // console.log(rules_list);
       if (rules_list.rules_limit == 1) {
           if (Number(goodsTotalPriceNoRules) >= Number(rules_list.rules_limit_price)) {
             if (rules_list.rules_type == 0) {
@@ -569,32 +569,32 @@ module.exports = class extends Base {
             goodsTotalPriceNoRules = (Number(goodsTotalPriceNoRules) * (Number(rules_list.rules_discount_price) / 10)).toFixed(2)
           }
       }
-      console.log(freightPriceNoRules,goodsTotalPriceNoRules);
-      console.log("////////////////////////////////////////////////////////////////////////");
-      console.log('进入用户等级减免规则');
+      // console.log(freightPriceNoRules,goodsTotalPriceNoRules);
+      // console.log("////////////////////////////////////////////////////////////////////////");
+      // console.log('进入用户等级减免规则');
       const userDiscount = await this.model('user').where({id:userId}).field(['user_level','user_discount']).find()
       let userDiscount_Value = ''
       let userDiscount_Price = 0.00
       userDiscount_Price = userDiscount.user_discount == 1 ?
       (Number(goodsTotalPriceNoRules) - Number(Number(goodsTotalPriceNoRules) * Number(userDiscount.user_discount))).toFixed(2)
       : (Number(goodsTotalPriceNoRules) - Number(Number(goodsTotalPriceNoRules) * Number(userDiscount.user_discount / 10))).toFixed(2)
-      console.log("用户等级减免的价格");
-      console.log(userDiscount_Price);
+      // console.log("用户等级减免的价格");
+      // console.log(userDiscount_Price);
       userDiscount_Value = '会员等级L' + userDiscount.user_level + '折扣 ' + userDiscount.user_discount + ' 减免 ' + userDiscount_Price + ' 元'
       console.log(userDiscount_Value);
       goodsTotalPriceNoRules = (Number(goodsTotalPriceNoRules) - Number(userDiscount_Price)).toFixed(2)
-      console.log("经过用户等级减免的最终价格");
-      console.log(goodsTotalPriceNoRules);
+      // console.log("经过用户等级减免的最终价格");
+      // console.log(goodsTotalPriceNoRules);
 
       const couponList = await this.model('coupon_user').where({user_id:userId,used_type:0}).select()
-      console.log(couponList);
+      // console.log(couponList);
       let cupprice = 0
-      console.log("////////////////////////////////////////////////////////////////////////");
-      console.log('进入优惠券计算规则');
+      // console.log("////////////////////////////////////////////////////////////////////////");
+      // console.log('进入优惠券计算规则');
       // console.log("未经过优惠券计算的订单价格");
       // console.log();
-      console.log(couponId);
-      if (parseInt(couponId) == 0) {
+      // console.log(couponId);
+      if (couponId == 0) {
           cupprice = 0
         }else {
           let selcup = await this.model('coupon_user').where({user_id:userId,coupon_id:couponId}).find()
@@ -605,15 +605,14 @@ module.exports = class extends Base {
           }
       }
       const couponPrice = cupprice; // 使用优惠券减免的金额
-      console.log(couponPrice);
+      // console.log(couponPrice);
 
       // 计算订单的费用
-      console.log("////////////////////////////////////////////////////////////////////////");
-      console.log('最终计算订单总价');
+      // console.log("////////////////////////////////////////////////////////////////////////");
+      // console.log('最终计算订单总价');
       const orderTotalPrice = (Number(goodsTotalPriceNoRules) + Number(freightPriceNoRules) - Number(couponPrice)).toFixed(2); // 订单的总价
       const actualPrice = (Number(orderTotalPrice) / 1).toFixed(2) ; // 减去其它支付的金额后，要实际支付的金额
       //
-
 
       return this.success({
         // ab2:abc,
