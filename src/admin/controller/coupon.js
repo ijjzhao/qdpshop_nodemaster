@@ -3,14 +3,19 @@ const Base = require('./base.js');
 module.exports = class extends Base {
   async findcouponinfoByIdAction() {
     const id = this.post('id')
-    const data = await this.model('coupon_main').where({id:id}).find()
+    const data = await this.model('coupon_main').where({ id: id }).find()
     return this.success(data)
   }
+
   async couponupdateAction() {
     const id = this.post('id')
     const coupon = this.post('coupon')
-    const data = await this.model('coupon_main').where({id:id}).update({
+    const data = await this.model('coupon_main').where({ id: id }).update({
+      logo_url: coupon.logo_url,
       coupon_name: coupon.name,
+      title: coupon.title,
+      sub_title: coupon.sub_title,
+      color: coupon.color,
       coupon_number: coupon.number,
       coupon_value: coupon.value,
       coupon_limit_value: coupon.limit_price,
@@ -20,6 +25,7 @@ module.exports = class extends Base {
     })
     return this.success(data)
   }
+
   /**
    * index action
    * @return {Promise} []
@@ -31,7 +37,7 @@ module.exports = class extends Base {
     // const consignee = this.get('consignee') || '';
     console.log(couponname);
     const model = this.model('coupon_main');
-    const data = await model.where({coupon_name: ['like', `%${couponname}%`]}).order(['id DESC']).page(page, size).countSelect();
+    const data = await model.where({ coupon_name: ['like', `%${couponname}%`] }).order(['id DESC']).page(page, size).countSelect();
     console.log(data);
     // const newList = [];
     // for (const item of data.data) {
@@ -53,7 +59,7 @@ module.exports = class extends Base {
     // const consignee = this.get('consignee') || '';
 
     const model = this.model('goods');
-    const data = await model.where({name: ['like', `%${goodsname}%`]}).order(['id DESC']).page(page, size).countSelect();
+    const data = await model.where({ name: ['like', `%${goodsname}%`] }).order(['id DESC']).page(page, size).countSelect();
     return this.success(data);
   }
   /**
@@ -68,7 +74,7 @@ module.exports = class extends Base {
     for (var i = 0; i < id.length; i++) {
       // array[i]
       let obj = {}
-      const data = await model.where({ id: id[i]}).order(['id DESC']).find();
+      const data = await model.where({ id: id[i] }).order(['id DESC']).find();
       obj = data
       datalist.push(obj)
     }
@@ -86,12 +92,12 @@ module.exports = class extends Base {
     for (var i = 0; i < id.length; i++) {
       // array[i]
       let obj = {}
-      const data = await model.where({ id: id[i]}).order(['id DESC']).find();
+      const data = await model.where({ id: id[i] }).order(['id DESC']).find();
       obj = data
       datalist.push(obj)
     }
     return this.success(datalist);
-  // }
+    // }
     // const data = await model.where({ id: id}).order(['id DESC']).select();
     // return this.success(data);
   }
@@ -107,7 +113,7 @@ module.exports = class extends Base {
     // const consignee = this.get('consignee') || '';
 
     const model = this.model('user');
-    const data = await model.where({nickname: ['like', `%${username}%`]}).order(['id DESC']).page(page, size).countSelect();
+    const data = await model.where({ nickname: ['like', `%${username}%`] }).order(['id DESC']).page(page, size).countSelect();
     return this.success(data);
   }
 
@@ -119,16 +125,14 @@ module.exports = class extends Base {
     const id = this.post('id');
     const is_able = this.post('data');
     const model = this.model('coupon_main');
-    const data = await model.where({coupon_id: id}).update({
-      coupon_isabled:is_able
+    const data = await model.where({ coupon_id: id }).update({
+      coupon_isabled: is_able
     });
     return this.success({
-      id:id,
-      data:data
+      id: id,
+      data: data
     });
   }
-
-
 
   /**
    * 数据库添加优惠券主表数据
@@ -164,46 +168,64 @@ module.exports = class extends Base {
     // if (userCupitem.length > 0) {
     //   for (var i = 0; i < userCupitem.length; i++) {
     //     console.log(userCupitem[i]);
-        // await this.model('coupon_user').add({
-        //   user_id:userCupitem[i],
-        //   coupon_id:couponId,
-        //   coupon_name:ruleForm.name,
-        //   coupon_number:ruleForm.number,
-        //   coupon_type:CupState.CupFrom,
-        //   coupon_value:ruleForm.value,
-        //   coupon_limit:CupState.CupLimit,
-        //   coupon_limit_value:ruleForm.limit_price,
-        //   coupon_user_getnumber:ruleForm.user_number,
-        //   validity_type:CupState.CupTime,
-        //   validity_create:CupTime.create,
-        //   validity_start:CupTime.start,
-        //   validity_end:CupTime.end,
-        //   point_goods:goodsCup,
-        //   point_user:userCup,
-        //   Instructions:ruleForm.Instructions,
-        // })
-      // }
+    // await this.model('coupon_user').add({
+    //   user_id:userCupitem[i],
+    //   coupon_id:couponId,
+    //   coupon_name:ruleForm.name,
+    //   coupon_number:ruleForm.number,
+    //   coupon_type:CupState.CupFrom,
+    //   coupon_value:ruleForm.value,
+    //   coupon_limit:CupState.CupLimit,
+    //   coupon_limit_value:ruleForm.limit_price,
+    //   coupon_user_getnumber:ruleForm.user_number,
+    //   validity_type:CupState.CupTime,
+    //   validity_create:CupTime.create,
+    //   validity_start:CupTime.start,
+    //   validity_end:CupTime.end,
+    //   point_goods:goodsCup,
+    //   point_user:userCup,
+    //   Instructions:ruleForm.Instructions,
+    // })
+    // }
     // }
     //
-    const data = await this.model('coupon_main').add({
-      coupon_name:ruleForm.name,
-      coupon_id:couponId,
-      coupon_isabled:CupState.CupAble,
-      coupon_number:ruleForm.number,
-      coupon_type:CupState.CupFrom,
-      coupon_value:ruleForm.value,
-      coupon_limit:CupState.CupLimit,
-      coupon_limit_value:ruleForm.limit_price,
-      coupon_user_getnumber:ruleForm.user_number,
-      validity_type:CupState.CupTime,
-      validity_create:CupTime.create,
-      validity_start:CupTime.start,
-      validity_end:CupTime.end,
-      validity_limit_day:CupTime.limit_day,
-      point_goods:goodsCup,
-      point_user:userCup,
-      Instructions:ruleForm.Instructions,
-    })
+
+    let card = {
+      logo_url: ruleForm.logo_url,
+      coupon_name: ruleForm.name,
+      title: ruleForm.title,
+      sub_title: ruleForm.sub_title,
+      color: ruleForm.color,
+      coupon_id: couponId,
+      coupon_isabled: CupState.CupAble,
+      coupon_number: ruleForm.number,
+      coupon_type: CupState.CupFrom,
+      coupon_value: ruleForm.value,
+      coupon_limit: CupState.CupLimit,
+      coupon_limit_value: ruleForm.limit_price,
+      coupon_user_getnumber: ruleForm.user_number,
+      validity_type: CupState.CupTime,
+      validity_create: CupTime.create,
+      validity_start: CupTime.start,
+      validity_end: CupTime.end,
+      validity_limit_day: CupTime.limit_day,
+      point_goods: goodsCup,
+      point_user: userCup,
+      Instructions: ruleForm.Instructions,
+    }
+    let wxcarddata = await this.service('wxcard', 'api').createCard(card.coupon_type, card.logo_url,
+      card.title, card.color, card.Instructions, card.coupon_number, card.validity_type,
+      card.validity_start, card.validity_end, card.validity_limit_day, card.coupon_value, card.coupon_limit_value);
+    
+    think.logger.debug(wxcarddata)
+    if (wxcarddata.errcode == 0) {
+      card.coupon_id = wxcarddata.card_id
+      const data = await this.model('coupon_main').add(card)
+      this.success()
+    } else {
+      this.fail()
+    }
+
     // console.log(data);
     // return this.success({
     //   ruleForm:ruleForm,
@@ -218,16 +240,15 @@ module.exports = class extends Base {
   async infoAction() {
     const id = this.post('id');
     const model = this.model('order');
-    const data = await model.where({id: id}).find();
+    const data = await model.where({ id: id }).find();
 
     return this.success(data);
   }
 
-
   async delcupAction() {
     const id = this.post('id');
-    await this.model('coupon_main').where({coupon_id: id}).limit(1).delete();
-
+    await this.model('coupon_main').where({ coupon_id: id }).limit(1).delete();
+    await this.service('wxcard', 'api').deleteCard(id);
     // 删除订单商品
     // await this.model('order_goods').where({order_id: id}).delete();
 

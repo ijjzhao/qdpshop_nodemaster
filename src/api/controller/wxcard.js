@@ -3,7 +3,7 @@ const Base = require('./base.js');
 // let testAppId = 'wxe9e9aa229f9bd508';
 // let testAppSecret = '148d3df2e562566e7f42009cb429318a';
 
-let card_id = 'pO78F1sBphJKd7tpy9-z25crV_50';
+let card_id = 'pO78F1jgzdYgtEoonXsScB5MbZX0';
 let my_openid = 'oO78F1h89ZMjq_vu4Iev7NfgNHQU'
 
 module.exports = class extends Base {
@@ -12,20 +12,24 @@ module.exports = class extends Base {
     return this.success();
   }
 
-  async testAction() {
+  async cardaddAction() {
+    let card = await this.model('coupon_main').where({id: 72}).find();
+    let wxcarddata = await this.service('wxcard', 'api').createCard(card.coupon_type, card.logo_url,
+      card.title, card.color, card.Instructions, card.coupon_number, card.validity_type,
+      card.validity_start, card.validity_end, card.validity_limit_day, card.coupon_value, card.coupon_limit_value)
+    console.log(wxcarddata);
+    this.success(wxcarddata)
+  }
+
+  async cardlistAction() {
     let service = this.service('wxcard', 'api');
-    let code = '011858520668'; //await service.decryptCode('IksvsPH78QozCvH3vW9v/CKGlf0Zx8m2V/mc9VqMcqg=');
-    let checked = await service.checkCode(code);
-    if (checked) {
-      let result = await service.consumeCode(code);
-      if (result) {
-        this.success('卡券核销成功');
-      } else {
-        this.fail('卡券核销失败');
-      }
-    } else {
-      this.fail('卡券状态异常');
-    }
+    this.success(await service.getCardList(['CARD_STATUS_NOT_VERIFY']));
+  }
+
+  async carddeleteAction() {
+    let card_id = this.get('card_id');
+    let service = this.service('wxcard', 'api');
+    this.success(await service.deleteCard(card_id));
   }
 
   /**

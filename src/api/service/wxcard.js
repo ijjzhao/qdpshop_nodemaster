@@ -123,37 +123,85 @@ module.exports = class extends think.Service {
    * GENERAL_COUPON 优惠券
    * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1451025056
    */
-  async createCard() {
+  async createCard(coupon_type, logo_url, title, color, Instructions, coupon_number, validity_type,
+    validity_start, validity_end, validity_limit_day, coupon_value, coupon_limit_value) {
     let access_token = await this.getAccessToken()
-    let { data } = await axios.post(`https://api.weixin.qq.com/card/create?access_token=${access_token}`, {
-      "card": {
-        "card_type": "GENERAL_COUPON",
-        "general_coupon": {
-          "base_info": {
-            logo_url: await this.uploadCardLogo(),
-            code_type: 'CODE_TYPE_QRCODE',
-            brand_name: '轻搭配',
-            title: '搭配方案9折券',
-            color: 'Color010',
-            notice: '请出示二维码',
-            description: '不可与其他优惠同享',
-            sku: {
-              quantity: 1000,
-            },
-            date_info: {
-              type: 'DATE_TYPE_FIX_TIME_RANGE',
-              begin_timestamp: parseInt(new Date().getTime() / 1000),
-              end_timestamp: parseInt(new Date().getTime() / 1000 + 7 * 24 * 3600)
-            },
-            can_give_friend: false, // 卡券是否可转赠
-          },
-          advanced_info: {
-          },
-          default_detail: "优惠券专用，填写优惠详情"
-        }
+
+    let card_type // 优惠券类型（0为指定金额 代金券，1为折扣 折扣券）
+    if (coupon_type == 0) {
+      card_type = "cash"
+    } else {
+      card_type = "discount"
+    }
+
+    let formData = {
+      card: {
+        card_type: card_type.toUpperCase()
       }
-    })
+    }
+
+    // 有效期类型（0为固定，1为当日，2为次日)
+    let date_info = {}
+    if (validity_type == 0) {
+      date_info.type = 'DATE_TYPE_FIX _TIME_RANGE'
+      date_info.begin_timestamp = parseInt(validity_start / 1000)
+      date_info.end_timestamp = parseInt(validity_end / 1000)
+    } else {
+      date_info.type = 'DATE_TYPE_FIX_TERM'
+      date_info.fixed_term = parseInt(validity_limit_day / 86400000)
+      date_info.fixed_begin_term = validity_type == 2 ? 1 : 0
+    }
+
+    formData.card[card_type] = {
+      base_info: {
+        logo_url: logo_url,
+        code_type: 'CODE_TYPE_QRCODE',
+        brand_name: think.config('brand_name'),
+        title: title,
+        color: color,
+        notice: '请出示二维码',
+        description: Instructions,
+        can_share: false,
+        can_give_friend: false,
+        sku: {
+          quantity: coupon_number
+        },
+        date_info: date_info,
+      }
+    }
+
+    if (card_type == 'discount') {
+      formData.card[card_type].discount = (10 - coupon_value) * 10
+    } else if (card_type == 'cash') {
+      formData.card[card_type].least_cost = coupon_limit_value * 100,
+        formData.card[card_type].reduce_cost = coupon_value * 100
+    }
+
+    console.log(formData)
+    console.log(date_info)
+    let { data } = await axios.post(`https://api.weixin.qq.com/card/create?access_token=${access_token}`, formData)
     return data
+  }
+
+  /**
+   * 更改卡券信息接口
+   * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1451025272
+   * 
+   */
+  async updateCard(card_id) {
+
+  }
+
+  /**
+   * 删除卡券接口
+   * @param {*} card_id 
+   */
+  async deleteCard(card_id) {
+    let access_token = await this.getAccessToken();
+    let { data } = await axios.post(`https://api.weixin.qq.com/card/delete?access_token=${access_token}`, {
+      card_id: card_id
+    })
+    return data;
   }
 
   /**
@@ -177,11 +225,11 @@ module.exports = class extends think.Service {
    * 批量查询卡券列表 接口
    * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1451025272
    * status_list：
-   * CARD_STATUS_NOT_VERIFY, 待审核
-   * CARD_STATUS_VERIFY_FAIL, 审核失败
-   * CARD_STATUS_VERIFY_OK， 通过审核
-   * CARD_STATUS_DELETE， 卡券被商户删除
-   * CARD_STATUS_DISPATCH， 在公众平台投放过的卡券
+   * CARD_STATUS_NOT_VERIFY 待审核
+   * CARD_STATUS_VERIFY_FAIL 审核失败
+   * CARD_STATUS_VERIFY_OK 通过审核
+   * CARD_STATUS_DELETE 卡券被商户删除
+   * CARD_STATUS_DISPATCH 在公众平台投放过的卡券
    */
   async getCardList(status_list = []) {
     let access_token = await this.getAccessToken();
@@ -232,7 +280,7 @@ module.exports = class extends think.Service {
     let { data } = await axios.post(`https://api.weixin.qq.com/card/code/decrypt?access_token=${access_token}`, {
       "encrypt_code": encrypt_code
     })
-    return data.errcode == 0? data.code : ''
+    return data.errcode == 0 ? data.code : ''
   }
 
   /**

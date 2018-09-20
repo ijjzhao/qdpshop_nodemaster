@@ -2,6 +2,7 @@
 module.exports = {
   default_module: 'api',
   workers: 1,
+  brand_name: '轻搭配',
   weixin: {
     appid: 'wx703fd25a2cfce741', // 小程序 appid
     secret: 'df6f71acbff56fddf7ad1c027786c6d1', // 小程序密钥,

@@ -770,7 +770,7 @@ DROP TABLE IF EXISTS `qdpshop_coupon_main`;
 CREATE TABLE `qdpshop_coupon_main` (
   `id` int(8) NOT NULL AUTO_INCREMENT COMMENT '优惠券的id',
   `coupon_isabled` int(1) NOT NULL DEFAULT '1' COMMENT '是否启用',
-  `coupon_id` varchar(16) NOT NULL COMMENT '优惠券id',
+  `coupon_id` varchar(255) NOT NULL COMMENT '优惠券id',
   `obtained_num` int(11) NOT NULL DEFAULT '0' COMMENT '已被获取的数量',
   `coupon_name` varchar(64) NOT NULL COMMENT '优惠券名字',
   `coupon_number` int(8) NOT NULL COMMENT '优惠券数量',
