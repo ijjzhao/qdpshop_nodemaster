@@ -123,7 +123,7 @@ module.exports = class extends think.Service {
    * GENERAL_COUPON 优惠券
    * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1451025056
    */
-  async createCard(coupon_type, logo_url, title, color, Instructions, coupon_number, validity_type,
+  async createCard(coupon_type, logo_url, coupon_name, color, Instructions, coupon_number, validity_type,
     validity_start, validity_end, validity_limit_day, coupon_value, coupon_limit_value) {
     let access_token = await this.getAccessToken()
 
@@ -157,7 +157,7 @@ module.exports = class extends think.Service {
         logo_url: logo_url,
         code_type: 'CODE_TYPE_QRCODE',
         brand_name: think.config('brand_name'),
-        title: title,
+        title: coupon_name,
         color: color,
         notice: '请出示二维码',
         description: Instructions,
@@ -188,8 +188,24 @@ module.exports = class extends think.Service {
    * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1451025272
    * 
    */
-  async updateCard(card_id) {
-
+  async updateCard(card_id, coupon_type, logo_url, color, Instructions) {
+    let access_token = await this.getAccessToken();
+    let postData = { card_id: card_id }
+    let card_type // 优惠券类型（0为指定金额 代金券，1为折扣 折扣券）
+    if (coupon_type == 0) {
+      card_type = "cash"
+    } else {
+      card_type = "discount"
+    }
+    postData[card_type] = {
+      base_info: {
+        logo_url: logo_url,
+        color: color,
+        description: Instructions
+      }
+    }
+    let { data } = await axios.post(`https://api.weixin.qq.com/card/update?access_token=${access_token}`, postData)
+    return data;
   }
 
   /**
@@ -239,6 +255,19 @@ module.exports = class extends think.Service {
       status_list: status_list
     })
     return data
+  }
+
+  /**
+   * 获取用户已领取卡券接口 公众号openid才行
+   * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1451025272
+   * 用于获取用户卡包里的，属于该appid下所有可用卡券，包括正常状态和异常状态。
+   */
+  async getUserCardList(openid, card_id) {
+    let access_token = await this.getAccessToken();
+    let postData = { openid: openid }
+    if (card_id) postData.card_id = card_id
+    let { data } = await axios.post(`https://api.weixin.qq.com/card/user/getcardlist?access_token=${access_token}`, postData)
+    return data;
   }
 
   /**

@@ -13,7 +13,7 @@ module.exports = class extends Base {
   }
 
   async cardaddAction() {
-    let card = await this.model('coupon_main').where({id: 72}).find();
+    let card = await this.model('coupon_main').where({ id: 72 }).find();
     let wxcarddata = await this.service('wxcard', 'api').createCard(card.coupon_type, card.logo_url,
       card.title, card.color, card.Instructions, card.coupon_number, card.validity_type,
       card.validity_start, card.validity_end, card.validity_limit_day, card.coupon_value, card.coupon_limit_value)
@@ -21,15 +21,29 @@ module.exports = class extends Base {
     this.success(wxcarddata)
   }
 
+  async carddeleteAction() {
+    let card_id = this.get('card_id');
+    let service = this.service('wxcard', 'api');
+    this.success(await service.deleteCard(card_id));
+  }
+
   async cardlistAction() {
     let service = this.service('wxcard', 'api');
     this.success(await service.getCardList(['CARD_STATUS_NOT_VERIFY']));
   }
 
-  async carddeleteAction() {
-    let card_id = this.get('card_id');
+  /**
+   * 需要公众号的openid才行 小程序没用
+   */
+  async carduserlistAction() {
+    let userId = think.userId;
+    if (!userId) return this.fail('未登录')
+
+    let user = await this.model('user').where({ id: userId }).find();
+    let openid = user.weixin_openid
+
     let service = this.service('wxcard', 'api');
-    this.success(await service.deleteCard(card_id));
+    this.success(await service.getUserCardList(openid));
   }
 
   /**
@@ -69,12 +83,35 @@ module.exports = class extends Base {
   async getsuccessAction() {
     let userId = think.userId;
     let cardList = this.post('cardList');
-    console.log(cardList);
     for (let i in cardList) {
       let card = cardList[i]
-      // TODO 存入数据库
+
       // TODO 减少库存
       console.log(card);
+      let card_id = card.cardId;
+      let code = await this.service('wxcard', 'api').decryptCode(card.code)
+
+      let coupon_main = await this.model('coupon_main').where({coupon_id: card_id}).find();
+      const coupon_user_id = await this.model('coupon_user').add({
+        user_id: userId,
+        coupon_id: card_id,
+        coupon_code: code,
+        coupon_name:coupon_main.coupon_name,
+        coupon_number:coupon_main.coupon_number,
+        coupon_type:coupon_main.coupon_type,
+        coupon_value:coupon_main.coupon_value,
+        coupon_limit:coupon_main.coupon_limit,
+        coupon_limit_value:coupon_main.coupon_limit_value,
+        coupon_user_getnumber:coupon_main.coupon_user_getnumber,
+        validity_type:coupon_main.validity_type,
+        validity_create:coupon_main.validity_create,
+        validity_start:new Date().getTime(),
+        validity_end: parseInt(new Date().getTime()) + parseInt(coupon_main.validity_limit_day),
+        point_goods:coupon_main.point_goods,
+        point_user:coupon_main.point_user,
+        Instructions:coupon_main.Instructions
+      })
+
     }
     this.success();
   }
@@ -91,4 +128,5 @@ module.exports = class extends Base {
     let encrypt_code = this.post('encrypt_code');
     return this.success(await this.service('wxcard', 'api').decryptCode(encrypt_code));
   }
+
 }

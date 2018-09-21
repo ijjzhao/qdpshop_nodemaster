@@ -811,7 +811,7 @@ DROP TABLE IF EXISTS `qdpshop_coupon_user`;
 CREATE TABLE `qdpshop_coupon_user` (
   `id` int(8) NOT NULL AUTO_INCREMENT COMMENT '优惠券的id',
   `user_id` int(8) NOT NULL COMMENT '能使用的用户id',
-  `coupon_id` varchar(16) NOT NULL,
+  `coupon_id` varchar(255) NOT NULL,
   `coupon_name` varchar(256) NOT NULL COMMENT '优惠券名字',
   `coupon_number` int(5) NOT NULL COMMENT '优惠券数量',
   `coupon_type` int(1) NOT NULL DEFAULT '0' COMMENT '优惠券类型（0为指定金额，1为折扣）',

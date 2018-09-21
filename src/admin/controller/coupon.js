@@ -10,20 +10,37 @@ module.exports = class extends Base {
   async couponupdateAction() {
     const id = this.post('id')
     const coupon = this.post('coupon')
-    const data = await this.model('coupon_main').where({ id: id }).update({
-      logo_url: coupon.logo_url,
-      coupon_name: coupon.name,
-      title: coupon.title,
-      sub_title: coupon.sub_title,
-      color: coupon.color,
-      coupon_number: coupon.number,
-      coupon_value: coupon.value,
-      coupon_limit_value: coupon.limit_price,
-      Instructions: coupon.Instructions,
-      coupon_limit: coupon.limit_type,
-      coupon_type: coupon.type,
-    })
-    return this.success(data)
+    const isWxcard = this.post('isWxcard')
+
+    let updateData = { Instructions: coupon.Instructions }
+    if (isWxcard == 1) {
+      updateData.logo_url = coupon.logo_url
+      updateData.color = coupon.color
+    } else {
+      updateData.coupon_name = coupon.name
+      updateData.coupon_number = coupon.number
+      updateData.coupon_value = coupon.value
+      updateData.coupon_limit_value = coupon.limit_price
+    }
+
+    let card = await this.model('coupon_main').where({ id: id }).find()
+
+    if (isWxcard == 1) {
+      // TODO 更新微信卡券信息
+      let wxdata = await this.service('wxcard', 'api').updateCard(card.coupon_id, card.coupon_type, coupon.logo_url, coupon.color, coupon.Instructions)
+      if (wxdata.errcode == 0) {
+        const data = await this.model('coupon_main').where({ id: id }).update(updateData)
+        this.success(data)
+      } else {
+        console.log('微信卡券更新信息错误')
+        this.fail()
+      }
+      think.logger.debug(`wx update data:`)
+      think.logger.debug(wxdata)
+    } else {
+      const data = await this.model('coupon_main').where({ id: id }).update(updateData)
+      this.success(data)
+    }
   }
 
   /**
@@ -35,10 +52,10 @@ module.exports = class extends Base {
     const size = this.get('size') || 10;
     const couponname = this.get('couponname') || '';
     // const consignee = this.get('consignee') || '';
-    console.log(couponname);
+    // console.log(couponname);
     const model = this.model('coupon_main');
     const data = await model.where({ coupon_name: ['like', `%${couponname}%`] }).order(['id DESC']).page(page, size).countSelect();
-    console.log(data);
+    // console.log(data);
     // const newList = [];
     // for (const item of data.data) {
     //   item.order_status_text = await this.model('order').getOrderStatusText(item.id);
@@ -144,9 +161,10 @@ module.exports = class extends Base {
     const CupState = this.post('CupState');
     const GoodsList = this.post('GoodsList');
     const UserList = this.post('UserList');
+    const isWxcard = this.post('isWxcard');
 
     const couponId = Math.random().toString(36).substr(2).toLocaleUpperCase();
-    console.log(couponId);
+    // console.log(couponId);
 
     let goodsitemKey = 0;
     let goodsCupitem = [];
@@ -154,7 +172,7 @@ module.exports = class extends Base {
       goodsCupitem.push(goodsItem.id)
       goodsitemKey += 1;
     }
-    console.log(goodsCupitem);
+    // console.log(goodsCupitem);
     const goodsCup = goodsCupitem.join(',')
     //
     let useritemKey = 0;
@@ -163,7 +181,7 @@ module.exports = class extends Base {
       userCupitem.push(userItem.id)
       useritemKey += 1;
     }
-    console.log(userCupitem);
+    // console.log(userCupitem);
     const userCup = userCupitem.join(',')
     // if (userCupitem.length > 0) {
     //   for (var i = 0; i < userCupitem.length; i++) {
@@ -193,8 +211,8 @@ module.exports = class extends Base {
     let card = {
       logo_url: ruleForm.logo_url,
       coupon_name: ruleForm.name,
-      title: ruleForm.title,
-      sub_title: ruleForm.sub_title,
+      // title: ruleForm.title,
+      // sub_title: ruleForm.sub_title,
       color: ruleForm.color,
       coupon_id: couponId,
       coupon_isabled: CupState.CupAble,
@@ -212,18 +230,25 @@ module.exports = class extends Base {
       point_goods: goodsCup,
       point_user: userCup,
       Instructions: ruleForm.Instructions,
+      isWxcard: isWxcard
     }
-    let wxcarddata = await this.service('wxcard', 'api').createCard(card.coupon_type, card.logo_url,
-      card.title, card.color, card.Instructions, card.coupon_number, card.validity_type,
-      card.validity_start, card.validity_end, card.validity_limit_day, card.coupon_value, card.coupon_limit_value);
-    
-    think.logger.debug(wxcarddata)
-    if (wxcarddata.errcode == 0) {
-      card.coupon_id = wxcarddata.card_id
+
+    if (isWxcard == 1) {
+      let wxcarddata = await this.service('wxcard', 'api').createCard(card.coupon_type, card.logo_url,
+        card.coupon_name, card.color, card.Instructions, card.coupon_number, card.validity_type,
+        card.validity_start, card.validity_end, card.validity_limit_day, card.coupon_value, card.coupon_limit_value);
+      
+      think.logger.debug(wxcarddata)
+      if (wxcarddata.errcode == 0) {
+        card.coupon_id = wxcarddata.card_id
+        const data = await this.model('coupon_main').add(card)
+        this.success()
+      } else {
+        this.fail()
+      }
+    } else {
       const data = await this.model('coupon_main').add(card)
       this.success()
-    } else {
-      this.fail()
     }
 
     // console.log(data);
