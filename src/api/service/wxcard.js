@@ -173,8 +173,8 @@ module.exports = class extends think.Service {
     if (card_type == 'discount') {
       formData.card[card_type].discount = (10 - coupon_value) * 10
     } else if (card_type == 'cash') {
-      formData.card[card_type].least_cost = coupon_limit_value * 100,
-        formData.card[card_type].reduce_cost = coupon_value * 100
+      formData.card[card_type].least_cost = coupon_limit_value ? 0 : coupon_limit_value * 100
+      formData.card[card_type].reduce_cost = coupon_value * 100
     }
 
     let { data } = await axios.post(`https://api.weixin.qq.com/card/create?access_token=${access_token}`, formData)

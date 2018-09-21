@@ -7,14 +7,14 @@ module.exports = class extends Base {
     for (var i = 0; i < checked.length; i++) {
       // array[i]
       // let obj = {}
-      console.log(checked[i].goods_specifition_ids);
-      const a = await this.model('product').where({goods_specification_ids:checked[i].goods_specifition_ids}).select()
-      console.log(a);
+      // console.log(checked[i].goods_specifition_ids);
+      const a = await this.model('product').where({ goods_specification_ids: checked[i].goods_specifition_ids }).select()
+      // console.log(a);
       if (a.length == 0) {
         //库存被改变
         outsku.push(checked[i])
         // return this.fail(17,'库存被改变',outsku);
-      }else {
+      } else {
         //库存没变
         // return this.fail(0,'库存没变');
       }
@@ -36,7 +36,7 @@ module.exports = class extends Base {
    * @returns {Promise.<{cartList: *, cartTotal: {goodsCount: number, goodsAmount: number, checkedGoodsCount: number, checkedGoodsAmount: number}}>}
    */
   async getCart() {
-    const cartList = await this.model('cart').where({user_id: think.userId, session_id: 1}).select();
+    const cartList = await this.model('cart').where({ user_id: think.userId, session_id: 1 }).select();
     // 获取购物车统计信息
     let goodsCount = 0;
     let goodsAmount = 0.00;
@@ -57,7 +57,7 @@ module.exports = class extends Base {
       }
 
       // 查找商品的图片
-      cartItem.list_pic_url = await this.model('goods').where({id: cartItem.goods_id}).getField('list_pic_url', true);
+      cartItem.list_pic_url = await this.model('goods').where({ id: cartItem.goods_id }).getField('list_pic_url', true);
     }
 
     return {
@@ -97,21 +97,21 @@ module.exports = class extends Base {
     // console.log(productId);
     // console.log(number);
     // 判断商品是否可以购买
-    const goodsInfo = await this.model('goods').where({id: goodsId}).find();
+    const goodsInfo = await this.model('goods').where({ id: goodsId }).find();
     console.log(goodsInfo);
     if (think.isEmpty(goodsInfo) || goodsInfo.is_delete === 1) {
       return this.fail(400, '商品已下架');
     }
 
     // 取得规格的信息,判断规格库存
-    const productInfo = await this.model('product').where({goods_id: goodsId, id: productId}).find();
+    const productInfo = await this.model('product').where({ goods_id: goodsId, id: productId }).find();
     console.log(productInfo);
     if (think.isEmpty(productInfo) || productInfo.goods_number < number) {
       return this.fail(400, '库存不足');
     }
 
     // 判断购物车中是否存在此规格商品
-    const cartInfo = await this.model('cart').where({user_id:think.userId, goods_id: goodsId, product_id: productId}).find();
+    const cartInfo = await this.model('cart').where({ user_id: think.userId, goods_id: goodsId, product_id: productId }).find();
     console.log("9999999999999999999999999999");
     console.log(cartInfo);
     if (think.isEmpty(cartInfo)) {
@@ -122,7 +122,7 @@ module.exports = class extends Base {
       if (!think.isEmpty(productInfo.goods_specification_ids)) {
         goodsSepcifitionValue = await this.model('goods_specification').where({
           goods_id: goodsId,
-          id: {'in': productInfo.goods_specification_ids.split('_')}
+          id: { 'in': productInfo.goods_specification_ids.split('_') }
         }).getField('value');
       }
       console.log(goodsSepcifitionValue);
@@ -155,13 +155,13 @@ module.exports = class extends Base {
 
       if (productInfo.goods_number < (number + cartInfo.number)) {
         return this.fail(400, '库存不足');
-      }else {
-        await this.model('cart').where({user_id: think.userId}).update({ checked: 0});
-        await this.model('cart').where({user_id: think.userId,product_id: productId,goods_id: goodsId}).update({ checked: 1});
+      } else {
+        await this.model('cart').where({ user_id: think.userId }).update({ checked: 0 });
+        await this.model('cart').where({ user_id: think.userId, product_id: productId, goods_id: goodsId }).update({ checked: 1 });
 
       }
 
-      return this.success(await this.getCart(),200);
+      return this.success(await this.getCart(), 200);
       // return this.fail(200, '商品存在购物车');
       //商品存在购物车
       // return this.success(200);
@@ -176,10 +176,6 @@ module.exports = class extends Base {
 
   }
 
-
-
-
-
   /**
    * 添加商品到购物车
    * @returns {Promise.<*>}
@@ -190,19 +186,19 @@ module.exports = class extends Base {
     const number = this.post('number');
 
     // 判断商品是否可以购买
-    const goodsInfo = await this.model('goods').where({id: goodsId}).find();
+    const goodsInfo = await this.model('goods').where({ id: goodsId }).find();
     if (think.isEmpty(goodsInfo) || goodsInfo.is_delete === 1) {
       return this.fail(400, '商品已下架');
     }
 
     // 取得规格的信息,判断规格库存
-    const productInfo = await this.model('product').where({goods_id: goodsId, id: productId}).find();
+    const productInfo = await this.model('product').where({ goods_id: goodsId, id: productId }).find();
     if (think.isEmpty(productInfo) || productInfo.goods_number < number) {
       return this.fail(400, '库存不足');
     }
 
     // 判断购物车中是否存在此规格商品
-    const cartInfo = await this.model('cart').where({user_id:think.userId,goods_id: goodsId, product_id: productId}).find();
+    const cartInfo = await this.model('cart').where({ user_id: think.userId, goods_id: goodsId, product_id: productId }).find();
     if (think.isEmpty(cartInfo)) {
       // 添加操作
 
@@ -211,7 +207,7 @@ module.exports = class extends Base {
       if (!think.isEmpty(productInfo.goods_specification_ids)) {
         goodsSepcifitionValue = await this.model('goods_specification').where({
           goods_id: goodsId,
-          id: {'in': productInfo.goods_specification_ids.split('_')}
+          id: { 'in': productInfo.goods_specification_ids.split('_') }
         }).getField('value');
       }
 
@@ -260,17 +256,17 @@ module.exports = class extends Base {
     const number = parseInt(this.post('number')); // 不是
 
     // 取得规格的信息,判断规格库存
-    const productInfo = await this.model('product').where({goods_id: goodsId, id: productId}).find();
+    const productInfo = await this.model('product').where({ goods_id: goodsId, id: productId }).find();
     if (think.isEmpty(productInfo) || productInfo.goods_number < number) {
       return this.fail(400, '库存不足');
     }
 
     // 判断是否已经存在product_id购物车商品
-    const cartInfo = await this.model('cart').where({user_id: think.userId,id: id}).find();
+    const cartInfo = await this.model('cart').where({ user_id: think.userId, id: id }).find();
     console.log(cartInfo);
     // 只是更新number
     if (cartInfo.product_id === productId) {
-      await this.model('cart').where({user_id: think.userId,id: id}).update({
+      await this.model('cart').where({ user_id: think.userId, id: id }).update({
         number: number
       });
 
@@ -338,17 +334,10 @@ module.exports = class extends Base {
     }
 
     productId = productId.split(',');
-    await this.model('cart').where({user_id: think.userId,product_id: {'in': productId}}).update({checked: parseInt(isChecked)});
+    await this.model('cart').where({ user_id: think.userId, product_id: { 'in': productId } }).update({ checked: parseInt(isChecked) });
 
     return this.success(await this.getCart());
   }
-
-
-
-  // 删除选中的购物车商品，批量删除
-
-
-
 
   // 删除选中的购物车商品，批量删除
   async deleteAction() {
@@ -359,7 +348,7 @@ module.exports = class extends Base {
 
     productId = productId.split(',');
 
-    await this.model('cart').where({user_id: think.userId,product_id: {'in': productId}}).delete();
+    await this.model('cart').where({ user_id: think.userId, product_id: { 'in': productId } }).delete();
 
     return this.success(await this.getCart());
   }
@@ -402,15 +391,15 @@ module.exports = class extends Base {
     //   console.log("123456789");
     // }
     // 选择的收货地址
-    const addressInfo = await this.model('address').where({user_id: userId}).select();
+    const addressInfo = await this.model('address').where({ user_id: userId }).select();
     // console.log(addressInfo);
     let checkedAddress = new Array();
     if (think.isEmpty(addressId)) {
-        // let abc = "123"
-      checkedAddress = await this.model('address').where({user_id: userId}).find();
+      // let abc = "123"
+      checkedAddress = await this.model('address').where({ user_id: userId }).find();
     } else {
       // let abc = "000"
-      checkedAddress = await this.model('address').where({id: addressId, user_id: userId}).find();
+      checkedAddress = await this.model('address').where({ id: addressId, user_id: userId }).find();
     }
 
     if (!think.isEmpty(checkedAddress)) {
@@ -423,37 +412,34 @@ module.exports = class extends Base {
     //     // let abc = 132
     // }
 
-
-
-
     // 获取要购买的商品
     const cartData = await this.getCart();
     const is_Identity = cartData.cartTotal.Identity == 0 ? 0 : 1
     // console.log('供货商*************************************');
     // let supplier_list = []
     // for (var d = 0; d < cartData.cartTotal.supplier_ids.length; d++) {
-      // let obj = await this.model('supplier').where({id:cartData.cartTotal.supplier_ids[d]}).find()
-      // supplier_list.push(obj)
+    // let obj = await this.model('supplier').where({id:cartData.cartTotal.supplier_ids[d]}).find()
+    // supplier_list.push(obj)
     // }
     // const supplier_ids = cartData.cartTotal.supplier_ids.join(',')
     // console.log(supplier_ids);
     // console.log(supplier_list);
     // console.log(cartData.cartTotal.supplier_ids);
-    const checkedGoodsList = cartData.cartList.filter(function(v) {
+    const checkedGoodsList = cartData.cartList.filter(function (v) {
       return v.checked === 1;
     });
-    console.log(checkedGoodsList);
-    const ordinaryFreightGoods = checkedGoodsList.filter(function(v) {
+    // console.log(checkedGoodsList);
+    const ordinaryFreightGoods = checkedGoodsList.filter(function (v) {
       return v.freight_type === 0;
     }); //统一运费的商品
-    const templeteFreightGoods = checkedGoodsList.filter(function(v) {
+    const templeteFreightGoods = checkedGoodsList.filter(function (v) {
       return v.freight_type === 1;
     });//运费模板的商品
 
     // 根据收货地址计算运费
     // console.log("******************************************************************");
     //计算运费
-    console.log('以下为统一运费的商品');
+    // console.log('以下为统一运费的商品');
     if (checkedGoodsList.length > 0) {
       // console.log(ordinaryFreightGoods);
       let ordinaryFreightGoods_Fright = 0.00
@@ -474,15 +460,15 @@ module.exports = class extends Base {
           templeteFreightGoods_templete_id_no_repeating.push(templeteFreightGoods[k].freight_template)
         }
       }
-      console.log(templeteFreightGoods_templete_id_no_repeating);
+      // console.log(templeteFreightGoods_templete_id_no_repeating);
       let templeteFreightGoods_templete_id_repeating = templeteFreightGoods_templete_id_no_repeating.filter(function (element, index, array) {
-          return array.indexOf(element) === index;
+        return array.indexOf(element) === index;
       });
       // console.log(templeteFreightGoods_templete_id_repeating); //去重
       let templeteFreightGoods_templete = [] //匹配到的运费模板规则
       for (var m = 0; m < templeteFreightGoods_templete_id_repeating.length; m++) {
-        const obj = await this.model('freight_template_main').where({id:templeteFreightGoods_templete_id_repeating[m]}).find()
-        let rules_list = await this.model('freight_template_auxiliary').where({temp_main_id:templeteFreightGoods_templete_id_repeating[m]}).select()
+        const obj = await this.model('freight_template_main').where({ id: templeteFreightGoods_templete_id_repeating[m] }).find()
+        let rules_list = await this.model('freight_template_auxiliary').where({ temp_main_id: templeteFreightGoods_templete_id_repeating[m] }).select()
         obj.rules_list = rules_list
         templeteFreightGoods_templete.push(obj)
       }
@@ -497,7 +483,7 @@ module.exports = class extends Base {
       // console.log('以下为所有模板的规则');
       for (var p = 0; p < all_templeteFreightGoods_templete_rules.length; p++) {
         let point_id_list = []
-        all_templeteFreightGoods_templete_rules[p].point_id_list = all_templeteFreightGoods_templete_rules[p].temp_point_city_id.split(',').map(num=>Number(num))
+        all_templeteFreightGoods_templete_rules[p].point_id_list = all_templeteFreightGoods_templete_rules[p].temp_point_city_id.split(',').map(num => Number(num))
       }
       // 以下开始查找省是否在规则内
       let all_in_rules_list = [] //省在规则内的所有规则
@@ -521,7 +507,7 @@ module.exports = class extends Base {
       // console.log(Number(fail_userd_point.temp_first_freight));
       // console.log(Number(fail_num - 1 ) / Number(fail_userd_point.temp_continue_weight) * Number(fail_userd_point.temp_continue_freight));
       templeteFreightGoods_freight = all_in_rules_list.length == 0 ? 0.00 : Number(fail_userd_point.temp_first_freight) +
-      Number((Number(fail_num - 1 ) / Number(fail_userd_point.temp_continue_weight) * Number(fail_userd_point.temp_continue_freight)).toFixed(2))
+        Number((Number(fail_num - 1) / Number(fail_userd_point.temp_continue_weight) * Number(fail_userd_point.temp_continue_freight)).toFixed(2))
       // console.log("老子才是运费模板的总运费啊 智障!!!!");
       // console.log(templeteFreightGoods_freight);
       let fail_order_freight = Number(ordinaryFreightGoods_Fright) + Number(templeteFreightGoods_freight)
@@ -538,55 +524,54 @@ module.exports = class extends Base {
       // console.log("////////////////////////////////////////////////////////////////////////");
       // console.log('进入全场价格计算规则');
       let rules_value = '无'
-      let rules_list = await this.model('cart_rules').where({rules_suit:0,is_abled:1}).find()
+      let rules_list = await this.model('cart_rules').where({ rules_suit: 0, is_abled: 1 }).find()
       // console.log(rules_list);
       if (rules_list.rules_limit == 1) {
-          if (Number(goodsTotalPriceNoRules) >= Number(rules_list.rules_limit_price)) {
-            if (rules_list.rules_type == 0) {
-              rules_value = ' 满 ' + rules_list.rules_limit_price + ' 元减免运费 ' + freightPriceNoRules  + ' 元 '
-              freightPriceNoRules = 0.00
-            }else if(rules_list.rules_type == 1){
-              rules_value = ' 满 ' + rules_list.rules_limit_price + ' 元减免 ' + rules_list.rules_minus_price + ' 元 '
-              goodsTotalPriceNoRules = Number(goodsTotalPriceNoRules) - Number(rules_list.rules_minus_price)
-            }else if(rules_list.rules_type == 2){
-              let dis_price = 0
-              dis_price = (Number(goodsTotalPriceNoRules) * ((10 - Number(rules_list.rules_discount_price)) / 10)).toFixed(2)
-              rules_value = ' 满 ' + rules_list.rules_limit_price + ' 元折扣 ' + rules_list.rules_discount_price + ' 减免 ' + dis_price + ' 元 '
-              goodsTotalPriceNoRules = (Number(goodsTotalPriceNoRules) * (Number(rules_list.rules_discount_price) / 10)).toFixed(2)
-            }
-          }
-        }else {
+        if (Number(goodsTotalPriceNoRules) >= Number(rules_list.rules_limit_price)) {
           if (rules_list.rules_type == 0) {
-            rules_value = ' 全场减免运费 ' + freightPriceNoRules + ' 元 '
+            rules_value = ' 满 ' + rules_list.rules_limit_price + ' 元减免运费 ' + freightPriceNoRules + ' 元 '
             freightPriceNoRules = 0.00
-          }else if(rules_list.rules_type == 1){
-            rules_value = ' 全场减免 ' + rules_list.rules_minus_price + ' 元 '
+          } else if (rules_list.rules_type == 1) {
+            rules_value = ' 满 ' + rules_list.rules_limit_price + ' 元减免 ' + rules_list.rules_minus_price + ' 元 '
             goodsTotalPriceNoRules = Number(goodsTotalPriceNoRules) - Number(rules_list.rules_minus_price)
-          }else if(rules_list.rules_type == 2){
+          } else if (rules_list.rules_type == 2) {
             let dis_price = 0
             dis_price = (Number(goodsTotalPriceNoRules) * ((10 - Number(rules_list.rules_discount_price)) / 10)).toFixed(2)
-            rules_value = ' 全场折扣 ' + rules_list.rules_discount_price + ' 减免 ' + dis_price +' 元 '
+            rules_value = ' 满 ' + rules_list.rules_limit_price + ' 元折扣 ' + rules_list.rules_discount_price + ' 减免 ' + dis_price + ' 元 '
             goodsTotalPriceNoRules = (Number(goodsTotalPriceNoRules) * (Number(rules_list.rules_discount_price) / 10)).toFixed(2)
           }
+        }
+      } else {
+        if (rules_list.rules_type == 0) {
+          rules_value = ' 全场减免运费 ' + freightPriceNoRules + ' 元 '
+          freightPriceNoRules = 0.00
+        } else if (rules_list.rules_type == 1) {
+          rules_value = ' 全场减免 ' + rules_list.rules_minus_price + ' 元 '
+          goodsTotalPriceNoRules = Number(goodsTotalPriceNoRules) - Number(rules_list.rules_minus_price)
+        } else if (rules_list.rules_type == 2) {
+          let dis_price = 0
+          dis_price = (Number(goodsTotalPriceNoRules) * ((10 - Number(rules_list.rules_discount_price)) / 10)).toFixed(2)
+          rules_value = ' 全场折扣 ' + rules_list.rules_discount_price + ' 减免 ' + dis_price + ' 元 '
+          goodsTotalPriceNoRules = (Number(goodsTotalPriceNoRules) * (Number(rules_list.rules_discount_price) / 10)).toFixed(2)
+        }
       }
       // console.log(freightPriceNoRules,goodsTotalPriceNoRules);
       // console.log("////////////////////////////////////////////////////////////////////////");
       // console.log('进入用户等级减免规则');
-      const userDiscount = await this.model('user').where({id:userId}).field(['user_level','user_discount']).find()
+      const userDiscount = await this.model('user').where({ id: userId }).field(['user_level', 'user_discount']).find()
       let userDiscount_Value = ''
       let userDiscount_Price = 0.00
       userDiscount_Price = userDiscount.user_discount == 1 ?
-      (Number(goodsTotalPriceNoRules) - Number(Number(goodsTotalPriceNoRules) * Number(userDiscount.user_discount))).toFixed(2)
-      : (Number(goodsTotalPriceNoRules) - Number(Number(goodsTotalPriceNoRules) * Number(userDiscount.user_discount / 10))).toFixed(2)
+        (Number(goodsTotalPriceNoRules) - Number(Number(goodsTotalPriceNoRules) * Number(userDiscount.user_discount))).toFixed(2)
+        : (Number(goodsTotalPriceNoRules) - Number(Number(goodsTotalPriceNoRules) * Number(userDiscount.user_discount / 10))).toFixed(2)
       // console.log("用户等级减免的价格");
       // console.log(userDiscount_Price);
       userDiscount_Value = '会员等级L' + userDiscount.user_level + '折扣 ' + userDiscount.user_discount + ' 减免 ' + userDiscount_Price + ' 元'
-      console.log(userDiscount_Value);
       goodsTotalPriceNoRules = (Number(goodsTotalPriceNoRules) - Number(userDiscount_Price)).toFixed(2)
       // console.log("经过用户等级减免的最终价格");
       // console.log(goodsTotalPriceNoRules);
 
-      const couponList = await this.model('coupon_user').where({user_id:userId,used_type:0}).select()
+      const couponList = await this.model('coupon_user').where({ user_id: userId, used_type: 0 }).select()
       // console.log(couponList);
       let cupprice = 0
       // console.log("////////////////////////////////////////////////////////////////////////");
@@ -595,14 +580,14 @@ module.exports = class extends Base {
       // console.log();
       // console.log(couponId);
       if (couponId == 0) {
-          cupprice = 0
-        }else {
-          let selcup = await this.model('coupon_user').where({user_id:userId,coupon_id:couponId}).find()
-          if (selcup.coupon_type == 0) {
-            cupprice = (selcup.coupon_value / 1).toFixed(2)
-          }else if (selcup.coupon_type == 1){
-            cupprice = (goodsTotalPriceNoRules - (goodsTotalPriceNoRules * ( selcup.coupon_value / 10 ))).toFixed(2)
-          }
+        cupprice = 0
+      } else {
+        let selcup = await this.model('coupon_user').where({ user_id: userId, coupon_id: couponId }).find()
+        if (selcup.coupon_type == 0) {
+          cupprice = (selcup.coupon_value / 1).toFixed(2)
+        } else if (selcup.coupon_type == 1) {
+          cupprice = (goodsTotalPriceNoRules - (goodsTotalPriceNoRules * (selcup.coupon_value / 10))).toFixed(2)
+        }
       }
       const couponPrice = cupprice; // 使用优惠券减免的金额
       // console.log(couponPrice);
@@ -611,15 +596,15 @@ module.exports = class extends Base {
       // console.log("////////////////////////////////////////////////////////////////////////");
       // console.log('最终计算订单总价');
       const orderTotalPrice = (Number(goodsTotalPriceNoRules) + Number(freightPriceNoRules) - Number(couponPrice)).toFixed(2); // 订单的总价
-      const actualPrice = (Number(orderTotalPrice) / 1).toFixed(2) ; // 减去其它支付的金额后，要实际支付的金额
+      const actualPrice = (Number(orderTotalPrice) / 1).toFixed(2); // 减去其它支付的金额后，要实际支付的金额
       //
 
       return this.success({
         // ab2:abc,
-        orderTotalPrice:orderTotalPrice,
-        addressInfo:addressInfo,
-        couponId:couponId,
-        addressId:addressId,
+        orderTotalPrice: orderTotalPrice,
+        addressInfo: addressInfo,
+        couponId: couponId,
+        addressId: addressId,
         checkedAddress: checkedAddress,
         freightPrice: freightPrice,
         couponList: couponList,
@@ -634,41 +619,40 @@ module.exports = class extends Base {
         orderTotalPrice: orderTotalPrice,
         actualPrice: actualPrice
       });
-    }else {
+    } else {
       const freightPrice = 0.00
       // 获取可用的优惠券信息，功能还示实现
       const goodsTotalPrice = cartData.cartTotal.checkedGoodsAmount; // 商品总价
 
-      const couponList = await this.model('coupon_user').where({user_id:userId,used_type:0}).select()
+      const couponList = await this.model('coupon_user').where({ user_id: userId, used_type: 0 }).select()
       let cupprice = 0
       if (parseInt(couponId) == 0) {
         cupprice = 0
-      }else {
-        let selcup = await this.model('coupon_user').where({user_id:userId,coupon_id:couponId}).find()
+      } else {
+        let selcup = await this.model('coupon_user').where({ user_id: userId, coupon_id: couponId }).find()
         if (selcup.coupon_type == 0) {
           cupprice = (selcup.coupon_value / 1).toFixed(2)
-        }else if (selcup.coupon_type == 1){
-          cupprice = (goodsTotalPrice - (goodsTotalPrice * ( selcup.coupon_value / 10 ))).toFixed(2)
+        } else if (selcup.coupon_type == 1) {
+          cupprice = (goodsTotalPrice - (goodsTotalPrice * (selcup.coupon_value / 10))).toFixed(2)
         }
       }
       const couponPrice = cupprice; // 使用优惠券减免的金额
 
-      console.log("////////////////////////////////////////////////////////////////////////");
+      // console.log("////////////////////////////////////////////////////////////////////////");
       // console.log(freightPrice);
       // const couponListAll = listall;
       // const couponPrice = 0; // 使用优惠券减免的金额
       // 计算订单的费用
       // const goodsTotalPrice = cartData.cartTotal.checkedGoodsAmount; // 商品总价
       const orderTotalPrice = (Number(cartData.cartTotal.checkedGoodsAmount) + Number(freightPrice) - Number(couponPrice)).toFixed(2); // 订单的总价
-      const actualPrice = (Number(orderTotalPrice) / 1).toFixed(2) ; // 减去其它支付的金额后，要实际支付的金额
+      const actualPrice = (Number(orderTotalPrice) / 1).toFixed(2); // 减去其它支付的金额后，要实际支付的金额
       //
 
-
       return this.success({
-        orderTotalPrice:orderTotalPrice,
-        addressInfo:addressInfo,
-        couponId:couponId,
-        addressId:addressId,
+        orderTotalPrice: orderTotalPrice,
+        addressInfo: addressInfo,
+        couponId: couponId,
+        addressId: addressId,
         checkedAddress: checkedAddress,
         freightPrice: freightPrice,
         couponList: couponList,
@@ -688,13 +672,13 @@ module.exports = class extends Base {
 
 
   async checkederAction() {
-    const cartData = await this.model('cart').where({user_id: think.userId}).update({ checked: 0});
+    const cartData = await this.model('cart').where({ user_id: think.userId }).update({ checked: 0 });
     return this.success({
       cartData: cartData,
     })
   }
   async checkededAction() {
-    const cartData = await this.model('cart').where({user_id: think.userId}).update({ checked: 1});
+    const cartData = await this.model('cart').where({ user_id: think.userId }).update({ checked: 1 });
     return this.success({
       cartData: cartData,
     })

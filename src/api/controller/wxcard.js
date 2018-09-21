@@ -32,6 +32,12 @@ module.exports = class extends Base {
     this.success(await service.getCardList(['CARD_STATUS_NOT_VERIFY']));
   }
 
+  async carddetailAction() {
+    let service = this.service('wxcard', 'api');
+    let data = await service.getCardDetail('pO78F1uKLtDwThAJ6BdqYDVgmtMo');
+    return this.success(data);
+  }
+
   /**
    * 需要公众号的openid才行 小程序没用
    */
@@ -88,40 +94,39 @@ module.exports = class extends Base {
   async getsuccessAction() {
     let userId = think.userId;
     let cardList = this.post('cardList');
-    for (let i in cardList) {
-      let card = cardList[i]
+    let card = cardList[0] // 只处理一张卡券的情况
 
-      let card_id = card.cardId;
-      let code = await this.service('wxcard', 'api').decryptCode(card.code)
+    let card_id = card.cardId;
+    let code = await this.service('wxcard', 'api').decryptCode(card.code)
 
-      let coupon_main = await this.model('coupon_main').where({ coupon_id: card_id }).find();
-      // 减少库存
-      await this.model('coupon_main').where({ coupon_id: card_id }).update({
-        obtained_num: Number(coupon_main.obtained_num) + 1
-      })
+    let coupon_main = await this.model('coupon_main').where({ coupon_id: card_id }).find();
+    // 减少库存
+    await this.model('coupon_main').where({ coupon_id: card_id }).update({
+      obtained_num: Number(coupon_main.obtained_num) + 1
+    })
 
-      const coupon_user_id = await this.model('coupon_user').add({
-        user_id: userId,
-        coupon_id: card_id,
-        coupon_code: code,
-        coupon_name: coupon_main.coupon_name,
-        coupon_number: coupon_main.coupon_number,
-        coupon_type: coupon_main.coupon_type,
-        coupon_value: coupon_main.coupon_value,
-        coupon_limit: coupon_main.coupon_limit,
-        coupon_limit_value: coupon_main.coupon_limit_value,
-        coupon_user_getnumber: coupon_main.coupon_user_getnumber,
-        validity_type: coupon_main.validity_type,
-        validity_create: coupon_main.validity_create,
-        validity_start: new Date().getTime(),
-        validity_end: parseInt(new Date().getTime()) + parseInt(coupon_main.validity_limit_day),
-        point_goods: coupon_main.point_goods,
-        point_user: coupon_main.point_user,
-        Instructions: coupon_main.Instructions
-      })
+    const coupon_user_id = await this.model('coupon_user').add({
+      user_id: userId,
+      coupon_id: card_id,
+      coupon_code: code,
+      coupon_name: coupon_main.coupon_name,
+      coupon_number: coupon_main.coupon_number,
+      coupon_type: coupon_main.coupon_type,
+      coupon_value: coupon_main.coupon_value,
+      coupon_limit: coupon_main.coupon_limit,
+      coupon_limit_value: coupon_main.coupon_limit_value,
+      coupon_user_getnumber: coupon_main.coupon_user_getnumber,
+      validity_type: coupon_main.validity_type,
+      validity_create: coupon_main.validity_create,
+      validity_start: new Date().getTime(),
+      validity_end: parseInt(new Date().getTime()) + parseInt(coupon_main.validity_limit_day),
+      point_goods: coupon_main.point_goods,
+      point_user: coupon_main.point_user,
+      Instructions: coupon_main.Instructions
+    })
 
-    }
-    this.success();
+    const coupon_user = await this.model('coupon_user').where({ id: coupon_user_id }).find()
+    return this.success(coupon_user)
   }
 
   // { cardId: 'pO78F1sBphJKd7tpy9-z25crV_50',
