@@ -139,11 +139,10 @@ module.exports = class extends think.Service {
         card_type: card_type.toUpperCase()
       }
     }
-
     // 有效期类型（0为固定，1为当日，2为次日)
     let date_info = {}
     if (validity_type == 0) {
-      date_info.type = 'DATE_TYPE_FIX _TIME_RANGE'
+      date_info.type = 'DATE_TYPE_FIX_TIME_RANGE'
       date_info.begin_timestamp = parseInt(validity_start / 1000)
       date_info.end_timestamp = parseInt(validity_end / 1000)
     } else {
@@ -151,6 +150,7 @@ module.exports = class extends think.Service {
       date_info.fixed_term = parseInt(validity_limit_day / 86400000)
       date_info.fixed_begin_term = validity_type == 2 ? 1 : 0
     }
+    console.log(date_info)
 
     formData.card[card_type] = {
       base_info: {
@@ -177,8 +177,6 @@ module.exports = class extends think.Service {
         formData.card[card_type].reduce_cost = coupon_value * 100
     }
 
-    console.log(formData)
-    console.log(date_info)
     let { data } = await axios.post(`https://api.weixin.qq.com/card/create?access_token=${access_token}`, formData)
     return data
   }

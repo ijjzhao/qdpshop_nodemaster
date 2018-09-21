@@ -142,6 +142,16 @@ module.exports = class extends Base {
     const id = this.post('id');
     const is_able = this.post('data');
     const model = this.model('coupon_main');
+    const card = await model.where({ coupon_id: id }).find()
+    const isWxcard = card.isWxcard;
+    if (isWxcard == 1) {
+      if (is_able == 1) return this.fail()
+
+      let service = this.service('wxcard', 'api')
+      const wxdata = await service.deleteCard(id)
+      think.logger.debug(wxdata)
+      if (wxdata.errcode != 0) return this.fail()
+    }
     const data = await model.where({ coupon_id: id }).update({
       coupon_isabled: is_able
     });

@@ -74,6 +74,11 @@ module.exports = class extends Base {
    */
   async getAction() {
     console.log(`userid: ${think.userId}`);
+    let card_id = this.post('card_id');
+    const have = await this.model('coupon_user').where({ coupon_id: card_id, user_id: think.userId }).select()
+    if (have.length !== 0) {
+      return this.fail(217, '已存在！')
+    }
     return this.success(await this.service('wxcard', 'api').getCodeForMiniProgram(card_id))
   }
 
@@ -86,30 +91,33 @@ module.exports = class extends Base {
     for (let i in cardList) {
       let card = cardList[i]
 
-      // TODO 减少库存
-      console.log(card);
       let card_id = card.cardId;
       let code = await this.service('wxcard', 'api').decryptCode(card.code)
 
-      let coupon_main = await this.model('coupon_main').where({coupon_id: card_id}).find();
+      let coupon_main = await this.model('coupon_main').where({ coupon_id: card_id }).find();
+      // 减少库存
+      await this.model('coupon_main').where({ coupon_id: card_id }).update({
+        obtained_num: Number(coupon_main.obtained_num) + 1
+      })
+
       const coupon_user_id = await this.model('coupon_user').add({
         user_id: userId,
         coupon_id: card_id,
         coupon_code: code,
-        coupon_name:coupon_main.coupon_name,
-        coupon_number:coupon_main.coupon_number,
-        coupon_type:coupon_main.coupon_type,
-        coupon_value:coupon_main.coupon_value,
-        coupon_limit:coupon_main.coupon_limit,
-        coupon_limit_value:coupon_main.coupon_limit_value,
-        coupon_user_getnumber:coupon_main.coupon_user_getnumber,
-        validity_type:coupon_main.validity_type,
-        validity_create:coupon_main.validity_create,
-        validity_start:new Date().getTime(),
+        coupon_name: coupon_main.coupon_name,
+        coupon_number: coupon_main.coupon_number,
+        coupon_type: coupon_main.coupon_type,
+        coupon_value: coupon_main.coupon_value,
+        coupon_limit: coupon_main.coupon_limit,
+        coupon_limit_value: coupon_main.coupon_limit_value,
+        coupon_user_getnumber: coupon_main.coupon_user_getnumber,
+        validity_type: coupon_main.validity_type,
+        validity_create: coupon_main.validity_create,
+        validity_start: new Date().getTime(),
         validity_end: parseInt(new Date().getTime()) + parseInt(coupon_main.validity_limit_day),
-        point_goods:coupon_main.point_goods,
-        point_user:coupon_main.point_user,
-        Instructions:coupon_main.Instructions
+        point_goods: coupon_main.point_goods,
+        point_user: coupon_main.point_user,
+        Instructions: coupon_main.Instructions
       })
 
     }
