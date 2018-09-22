@@ -3,7 +3,7 @@ const Base = require('./base.js');
 // let testAppId = 'wxe9e9aa229f9bd508';
 // let testAppSecret = '148d3df2e562566e7f42009cb429318a';
 
-let card_id = 'pO78F1jgzdYgtEoonXsScB5MbZX0';
+let card_id = 'pO78F1vinIvHxD77oejljOUu7l5M';
 let my_openid = 'oO78F1h89ZMjq_vu4Iev7NfgNHQU'
 
 module.exports = class extends Base {
@@ -78,8 +78,19 @@ module.exports = class extends Base {
   /**
    * 小程序领取卡券动作
    */
+  async gettestAction() {
+    // let card_id = this.post('card_id');
+    // const have = await this.model('coupon_user').where({ coupon_id: card_id, user_id: think.userId }).select()
+    // if (have.length !== 0) {
+    //   return this.fail(217, '已存在！')
+    // }
+    return this.success(await this.service('wxcard', 'api').getCodeForMiniProgram(card_id))
+  }
+
+    /**
+   * 小程序领取卡券动作
+   */
   async getAction() {
-    console.log(`userid: ${think.userId}`);
     let card_id = this.post('card_id');
     const have = await this.model('coupon_user').where({ coupon_id: card_id, user_id: think.userId }).select()
     if (have.length !== 0) {
@@ -87,7 +98,7 @@ module.exports = class extends Base {
     }
     return this.success(await this.service('wxcard', 'api').getCodeForMiniProgram(card_id))
   }
-
+  
   /**
    * 用户领取成功动作
    */
