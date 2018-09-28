@@ -23,7 +23,7 @@ module.exports = class extends think.Service {
     // 七牛提供的私钥
     const secretKey = think.config('qiniu.secretKey')
     // 存储空间名
-    const bucketName = think.config('qiniu.bucketName')
+    const bucketName = think.config('qiniu.xcxBucketName')
     var mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
 
     var options = {}
@@ -71,7 +71,7 @@ module.exports = class extends think.Service {
     // 七牛提供的私钥
     const secretKey = think.config('qiniu.secretKey')
     // 存储空间名
-    const bucketName = think.config('qiniu.bucketName')
+    const bucketName = think.config('qiniu.xcxBucketName')
 
     var mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
     var bucketManager = new qiniu.rs.BucketManager(mac, config);

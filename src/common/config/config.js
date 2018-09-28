@@ -25,7 +25,8 @@ module.exports = {
   qiniu: {
     accessKey: 'dKawexMpnY_7Zmek8aJ0RbtatIqTIMvyurd2xdXM', // 七牛提供的公钥
     secretKey: 'X7n14IN13ThBDF2NhMbfwEvhZ0W0RZUqeyRQfSoX', // 七牛提供的私钥
-    bucketName: 'collocate', // 存储空间名,
+    bucketName: 'qingdapei', // 存储空间名
+    xcxBucketName: 'collocate', // 小程序存储空间名
     key: 'img/planTest/'
   },
   SMSClient: { //阿里云通信基础能力业务短信发送
