@@ -93,3 +93,19 @@ INSERT INTO `qdpshop_style_name` VALUES ('1', '简约'), ('2', '休闲'), ('3', 
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+DROP TABLE IF EXISTS `qdpshop_user_info`;
+CREATE TABLE `qdpshop_user_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `height` varchar(10),
+  `weight` varchar(10),
+  `age` int(3),
+  `detail` varchar(255),
+  `color` varchar(255),
+  `style` varchar(255),
+  `cut` int(1),
+  `size` varchar(20),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
