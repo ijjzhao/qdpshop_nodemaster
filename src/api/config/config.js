@@ -17,7 +17,8 @@ module.exports = {
     'stylist',
     'plan',
     'stylename',
-    'wxcard'
+    'wxcard',
+    'userinfo'
   ],
 
   // 可以公开访问的Action
