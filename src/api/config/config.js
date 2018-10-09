@@ -18,7 +18,8 @@ module.exports = {
     'plan',
     'stylename',
     'wxcard',
-    'userinfo'
+    'userinfo',
+    'couponbag'
   ],
 
   // 可以公开访问的Action
