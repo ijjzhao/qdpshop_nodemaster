@@ -55,7 +55,7 @@ module.exports = class extends Base {
     const couponname = this.get('couponname') || '';
 
     const model = this.model('coupon_main');
-    const data = await model.where({ coupon_name: ['like', `%${couponname}%`] }).order(['id DESC']).page(page, size).countSelect();
+    const data = await model.where({ coupon_name: ['like', `%${couponname}%`], coupon_isabled: 1 }).order(['id DESC']).page(page, size).countSelect();
     return this.success(data);
   }
   
@@ -63,5 +63,18 @@ module.exports = class extends Base {
     const id = this.post('id');
     await this.model('coupon_bag').where({ id }).limit(1).delete();
     return this.success();
+  }
+
+  async findpointcouponAction() {
+    const id = this.post('id');
+    const model = this.model('coupon_main');
+    let datalist = []
+    for (var i = 0; i < id.length; i++) {
+      let obj = {}
+      const data = await model.where({ id: id[i] }).order(['id DESC']).find();
+      obj = data
+      datalist.push(obj)
+    }
+    return this.success(datalist);
   }
 }
