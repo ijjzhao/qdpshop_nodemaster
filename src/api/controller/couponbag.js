@@ -47,23 +47,15 @@ module.exports = class extends Base {
             point_user: coupon_main.point_user,
             Instructions: coupon_main.Instructions
           })
+        } else {
+          return this.fail('卡包内有已经领取过的卡券')
         }
       }
       // 用户获取卡券 结束
-
       this.success({ bag, coupons });
-
     } else {
       this.fail('没有可用的新人卡包')
     }
-  }
-
-  async updateAction() {
-    let id = this.post('id')
-    let form = this.post('form')
-
-    let res = await this.model('coupon_bag').where({ id }).update(form)
-    this.success(res);
   }
 
 }
