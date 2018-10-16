@@ -72,6 +72,7 @@ CREATE TABLE `qdpshop_user_info` (
   `style` varchar(255),
   `cut` int(1),
   `size` varchar(20),
+  `pics` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 

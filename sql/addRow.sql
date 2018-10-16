@@ -10,3 +10,5 @@ alter table `qdpshop_coupon_main` add column `isWxcard` int(1) NOT NULL DEFAULT 
 alter table `qdpshop_coupon_main` modify column `coupon_id` varchar(255);
 alter table `qdpshop_coupon_user` modify column `coupon_id` varchar(255);
 alter table `qdpshop_coupon_user` add column `coupon_code` varchar(255) NOT NULL DEFAULT '';
+
+alter table `qdpshop_user_info` add column `pics` text;

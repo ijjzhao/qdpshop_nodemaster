@@ -11,14 +11,14 @@ module.exports = class extends Base {
     // 七牛提供的私钥
     var secretKey = think.config('qiniu.secretKey')
     // 存储空间名
-    var bucketName = think.config('qiniu.bucketName')
+    var bucketName = think.config('qiniu.xcxBucketName')
     var mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
 
     var options = {
         "scope": bucketName
       };
       var putPolicy = new qiniu.rs.PutPolicy(options);
-      var uploadToken=putPolicy.uploadToken(mac);
+      var uploadToken = putPolicy.uploadToken(mac);
       console.log(uploadToken);
         return this.success({
             uploadToken:uploadToken
