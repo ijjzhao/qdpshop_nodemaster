@@ -23,14 +23,9 @@ module.exports = class extends Base {
     return this.success(data);
   }
 
-  async checkAction() {
+  async getidAction() {
     const user_id = this.get('user_id')
     let userInfo = await this.model('user').where({id: user_id}).find();
-
-    if (userInfo.stylist_id != 0) {
-      this.success('该用户是搭配师')
-    } else {
-      this.fail('该用户不是搭配师')
-    }
+    this.success(userInfo.stylist_id)
   }
 }
