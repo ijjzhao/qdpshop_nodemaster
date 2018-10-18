@@ -73,6 +73,8 @@ CREATE TABLE `qdpshop_user_info` (
   `cut` int(1),
   `size` varchar(20),
   `pics` text,
+  `create_at` varchar(13) COMMENT '创建时间',
+  `update_at` varchar(13) COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 

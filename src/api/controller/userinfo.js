@@ -13,10 +13,11 @@ module.exports = class extends Base {
 
     let user_info = await this.model('user_info').where({ user_id }).find()
     if (!user_info.user_id) {
-      await this.model('user_info').add({user_id})
+      let create_at = new Date().getTime()
+      await this.model('user_info').add({user_id, create_at})
     }
+    form.update_at = new Date().getTime()
 
-    // console.log(form)
     let res = await this.model('user_info').where({ user_id }).update(form)
     this.success(res);
   }
