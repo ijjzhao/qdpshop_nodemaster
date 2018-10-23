@@ -9,6 +9,8 @@ module.exports = class extends Base {
 
   async updateAction() {
     let user_id = this.post('user_id')
+    if (user_id == 0) return this.fail('用户账户id为空')
+    
     let form = this.post('form')
 
     let user_info = await this.model('user_info').where({ user_id }).find()
