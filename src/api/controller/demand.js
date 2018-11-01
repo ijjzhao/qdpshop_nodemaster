@@ -65,4 +65,17 @@ module.exports = class extends Base {
     this.success(res);
   }
 
+  async allplanAction() {
+    let user_id = this.post('user_id')
+    let data = await this.model('demand').where({user_id}).field(['plan_id']).select();
+    let arr = []
+    for(let i in data) {
+      let demand = data[i]
+      if (demand.plan_id != 0 && arr.indexOf(demand.plan_id) == -1) {
+        arr.push(demand.plan_id)
+      }
+    }
+    this.success(arr)
+  }
+
 }

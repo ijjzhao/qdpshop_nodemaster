@@ -19,3 +19,5 @@ alter table `qdpshop_user_info` add column `update_at` varchar(13) COMMENT '更�
 
 
 alter table `qdpshop_user` add column `avatarUrl` varchar(255) NOT NULL DEFAULT '';
+
+alter table `qdpshop_demand` add column `plan_id` int(11) NOT NULL DEFAULT 0 COMMENT '下单的方案id';
