@@ -248,6 +248,68 @@ module.exports = class extends Base {
     return this.success(await this.getCart());
   }
 
+  /**
+   * 添加商品列表到购物车 为了直接下单 跳过购物车，每次添加 先删除原来购物车的内容
+   * @returns {Promise.<*>}
+   */
+  async addlistAction() {
+
+    const goodsList = this.post('goodsList');
+
+    await this.model('cart').where({ user_id: think.userId}).delete()
+
+    for (let i in goodsList) {
+      let goods = goodsList[i]
+      const goodsId = goods.goodsId;
+      const productId = goods.productId;
+      const number = goods.number;
+  
+      // 判断商品是否可以购买
+      const goodsInfo = await this.model('goods').where({ id: goodsId }).find();
+      if (think.isEmpty(goodsInfo) || goodsInfo.is_delete === 1) {
+        return this.fail(400, '商品已下架');
+      }
+  
+      // 取得规格的信息,判断规格库存
+      const productInfo = await this.model('product').where({ goods_id: goodsId, id: productId }).find();
+      if (think.isEmpty(productInfo) || productInfo.goods_number < number) {
+        return this.fail(400, '库存不足');
+      }
+  
+      // 添加规格名和值
+      let goodsSepcifitionValue = [];
+      if (!think.isEmpty(productInfo.goods_specification_ids)) {
+        goodsSepcifitionValue = await this.model('goods_specification').where({
+          goods_id: goodsId,
+          id: { 'in': productInfo.goods_specification_ids.split('_') }
+        }).getField('value');
+      }
+
+      await this.model('cart').add({
+        goods_id: goodsId,
+        product_id: productId,
+        goods_sn: productInfo.goods_sn,
+        goods_name: goodsInfo.name,
+        list_pic_url: goodsInfo.list_pic_url,
+        number: number,
+        session_id: 1,
+        user_id: think.userId,
+        retail_price: productInfo.retail_price,
+        market_price: productInfo.retail_price,
+        goods_specifition_name_value: goodsSepcifitionValue.join(';'),
+        goods_specifition_ids: productInfo.goods_specification_ids,
+        checked: 1,
+        freight_price: goodsInfo.freight_price,
+        freight_template: goodsInfo.freight_template,
+        freight_type: goodsInfo.freight_type,
+        supplier_id: goodsInfo.supplier_id,
+        Identity: goodsInfo.Identity,
+      });
+
+    }
+    return this.success(await this.getCart());
+  }
+
   // 更新指定的购物车信息
   async updateAction() {
     const goodsId = this.post('goodsId');

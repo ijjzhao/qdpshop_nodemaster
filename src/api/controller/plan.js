@@ -15,6 +15,10 @@ module.exports = class extends Base {
   async getAction() {
     let id = this.get('id');
     let data = await this.model('plan').getPlanAndItems(id);
+    let stylist = await this.model('stylist').where({id: data.plan.stylist_id }).find();
+    let userinfo = await this.model('user').where({ id: stylist.user_id }).field(['nickname', 'avatarUrl']).find()
+    data.plan.nickname = userinfo.nickname;
+    data.plan.avatarUrl = userinfo.avatarUrl;
     this.success(data, 'ok');
   }
 

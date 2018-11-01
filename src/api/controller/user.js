@@ -3,6 +3,20 @@ const fs = require('fs');
 const _ = require('lodash');
 
 module.exports = class extends Base {
+
+  async updateAvatarUrlAction() {
+    let id = think.userId
+    let avatarUrl = this.post('form').avatarUrl
+
+    if (!avatarUrl) {
+      this.fail();
+    }
+
+    await this.model('user').where({id}).update({avatarUrl: avatarUrl})
+    this.success()
+  }
+
+
   async getuserlevelinfoAction() {
     const userId = this.post('userId')
     console.log(userId);

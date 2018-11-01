@@ -78,7 +78,7 @@ CREATE TABLE `qdpshop_user_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `qdpshop_coupon_bag`;
+-- DROP TABLE IF EXISTS `qdpshop_coupon_bag`;
 CREATE TABLE `qdpshop_coupon_bag` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -89,5 +89,32 @@ CREATE TABLE `qdpshop_coupon_bag` (
   `end_at` varchar(32) DEFAULT NULL COMMENT '有效期结束时间',
   `isabled` int(1) NOT NULL DEFAULT 1,
   `create_at` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `qdpshop_demand` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL COMMENT '用户id',
+  `scene` int(1) NOT NULL DEFAULT 0 COMMENT '穿衣场景', -- 0 日常 1 商务拜访 2 运动休闲 3约会 4 其他
+  `budget` int(1) NOT NULL DEFAULT 0 COMMENT '预算', -- 0 100-300元 1 300-600元 2 600-1000元
+  `desc`  int(1) NOT NULL DEFAULT 0 COMMENT '描述', -- 0 舒适就好 1 要帅 2 要有气质 3 其他
+  `other` varchar(255) NOT NULL DEFAULT '' COMMENT '其他想说的话',
+  `plans` varchar(255) NOT NULL DEFAULT '[]' COMMENT '方案id',
+  `status` int(1) NOT NULL DEFAULT 0 COMMENT '订单状态', -- 0 用户提交 1 搭配师选择方案完毕 2 用户下单 3 完成支付
+  `isabled` int(1) NOT NULL DEFAULT 1,
+  `create_at` varchar(255) NOT NULL,
+  `update_at` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `qdpshop_user_note` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL COMMENT '用户id',
+  `note` varchar(255) NOT NULL DEFAULT '' COMMENT 'note',
+  `stylist_user_id` int(11) NOT NULL COMMENT '搭配师用户id',
+  `create_at` varchar(255) NOT NULL,
+  `update_at` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
