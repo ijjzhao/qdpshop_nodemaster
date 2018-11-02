@@ -6,12 +6,12 @@ module.exports = class extends Base {
 
   async getAction() {
     let id = this.get('id')
-    let demand = await this.model('demand').where({id}).find()
+    let demand = await this.model('demand').where({ id }).find()
     let user_id = demand.user_id
     let userinfo = await this.model('user').where({ id: user_id }).field(['nickname', 'avatarUrl']).find()
     demand.nickname = userinfo.nickname;
     demand.avatarUrl = userinfo.avatarUrl;
-    this.success({demand})
+    this.success({ demand })
   }
 
   async listAction() {
@@ -22,7 +22,7 @@ module.exports = class extends Base {
     if (isCustomer) {
       whereJson.user_id = user_id
     }
-    let list = await this.model('demand').where(whereJson).order(['id DESC']).page(page, pageCount).select();
+    let list = await this.model('demand').where(whereJson).order(['status']).page(page, pageCount).select();
     let map = {}
     for (let i in list) {
       let user_id = list[i].user_id;
@@ -30,7 +30,7 @@ module.exports = class extends Base {
         map[user_id] = await this.model('user').where({ id: user_id }).field(['id', 'nickname', 'avatarUrl']).find()
       } else {
         if (!map[user_id].age) {
-          let userinfo = await this.model('user_info').where({user_id}).find();
+          let userinfo = await this.model('user_info').where({ user_id }).find();
           map[user_id].age = userinfo.age
         }
       }
@@ -67,9 +67,9 @@ module.exports = class extends Base {
 
   async allplanAction() {
     let user_id = this.post('user_id')
-    let data = await this.model('demand').where({user_id}).field(['plan_id']).select();
+    let data = await this.model('demand').where({ user_id }).field(['plan_id']).select();
     let arr = []
-    for(let i in data) {
+    for (let i in data) {
       let demand = data[i]
       if (demand.plan_id != 0 && arr.indexOf(demand.plan_id) == -1) {
         arr.push(demand.plan_id)

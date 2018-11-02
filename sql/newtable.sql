@@ -100,6 +100,7 @@ CREATE TABLE `qdpshop_demand` (
   `budget` int(1) NOT NULL DEFAULT 0 COMMENT '预算', -- 0 100-300元 1 300-600元 2 600-1000元
   `desc`  int(1) NOT NULL DEFAULT 0 COMMENT '描述', -- 0 舒适就好 1 要帅 2 要有气质 3 其他
   `other` varchar(255) NOT NULL DEFAULT '' COMMENT '其他想说的话',
+  `stylist_desc` varchar(255) NOT NULL DEFAULT '' COMMENT '搭配师写的描述',
   `plans` varchar(255) NOT NULL DEFAULT '[]' COMMENT '方案id',
   `plan_id` int(11) NOT NULL DEFAULT 0 COMMENT '下单的方案id',
   `status` int(1) NOT NULL DEFAULT 0 COMMENT '订单状态', -- 0 用户提交 1 搭配师选择方案完毕 2 用户下单 3 完成支付
