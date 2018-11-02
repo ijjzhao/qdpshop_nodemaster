@@ -1,14 +1,14 @@
 USE `qdpshop`;
 
--- DROP TABLE IF EXISTS `qdpshop_plan`;
+DROP TABLE IF EXISTS `qdpshop_plan`;
 CREATE TABLE `qdpshop_plan` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `stylist_id` mediumint(5) unsigned NOT NULL,
   `name` varchar(60) NOT NULL DEFAULT '',
-  `style` varchar(20) NOT NULL DEFAULT '',
   `v` smallint(5) unsigned NOT NULL DEFAULT 1,
-  `fit_group` varchar(255) NOT NULL DEFAULT '',
-  `fit_scene` varchar(255) NOT NULL DEFAULT '',
+  `style` int(1) NOT NULL DEFAULT -1 COMMENT '风格', -- 0 简约 1 时尚 2 休闲 3 运动 4 商务
+  `cut` int(1) NOT NULL DEFAULT -1 COMMENT '版型', -- 0 修身 1 适中 2 宽松
+  `feel` varchar(255) NOT NULL DEFAULT '[]' COMMENT '体感', -- 0 舒适 1 透气 2 有型 3 正常
   `desc` varchar(255) NOT NULL DEFAULT '',
   `add_time` timestamp NOT NULL,
   `enabled` tinyint(3) unsigned NOT NULL DEFAULT '1',

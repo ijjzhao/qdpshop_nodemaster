@@ -27,8 +27,8 @@ module.exports = class extends Base {
     const plan_id = this.post('id')
     const name = this.post('name');
     const style = this.post('style');
-    const fit_group = this.post('fit_group');
-    const fit_scene = this.post('fit_scene');
+    const cut = this.post('cut');
+    const feel = this.post('feel');
     const desc = this.post('desc');
     const v = parseInt(this.post('v')) + 1;
     const goodsArr = JSON.parse(this.post('goodsArr'));
@@ -40,7 +40,7 @@ module.exports = class extends Base {
     }
     // 更新plan数据库
     await this.model('plan').where({ id: plan_id }).update({
-      name, style, fit_group, fit_scene, desc, add_time, v
+      name, style, cut, feel, desc, add_time, v
     });
 
     // 新图片上传七牛
@@ -80,11 +80,11 @@ module.exports = class extends Base {
     const stylist_id = this.post('stylist_id') || 1;
     const name = this.post('name');
     const style = this.post('style');
-    const fit_group = this.post('fit_group');
-    const fit_scene = this.post('fit_scene');
+    const cut = this.post('cut');
+    const feel = this.post('feel');
     const desc = this.post('desc');
     const goodsArr = JSON.parse(this.post('goodsArr'));
-
+    console.log(feel)
     const add_time = new Date()
 
     if (think.isEmpty(image)) {
@@ -94,7 +94,7 @@ module.exports = class extends Base {
     // 添加到plan数据库 获得id
     const model = this.model('plan');
     const plan_id = await model.add({
-      stylist_id, name, style, fit_group, fit_scene, desc, add_time
+      stylist_id, name, style, cut, feel, desc, add_time
     })
 
     // 上传图片到七牛 文件名为id.png
