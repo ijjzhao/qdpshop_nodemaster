@@ -22,7 +22,8 @@ module.exports = class extends Base {
     if (isCustomer) {
       whereJson.user_id = user_id
     }
-    let list = await this.model('demand').where(whereJson).order(['status']).page(page, pageCount).select();
+    // let list = await this.model('demand').where(whereJson).order([`status`]).page(page, pageCount).select();
+    let list = await this.model('demand').where(whereJson).order([`id DESC`]).page(page, pageCount).select();
     let map = {}
     for (let i in list) {
       let user_id = list[i].user_id;
