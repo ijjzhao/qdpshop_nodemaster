@@ -29,6 +29,8 @@ module.exports = class extends Base {
       let user_id = list[i].user_id;
       if (!map[user_id]) {
         map[user_id] = await this.model('user').where({ id: user_id }).field(['id', 'nickname', 'avatarUrl']).find()
+        let userinfo = await this.model('user_info').where({ user_id }).find();
+        map[user_id].age = userinfo.age
       } else {
         if (!map[user_id].age) {
           let userinfo = await this.model('user_info').where({ user_id }).find();
