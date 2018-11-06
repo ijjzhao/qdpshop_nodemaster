@@ -39,7 +39,7 @@ module.exports = class extends Base {
 
     if (!user_info.height || !user_info.weight || !user_info.age || !user_info.detail ||
       !user_info.color || !user_info.style || user_info.cut == undefined || !user_info.size) {
-        this.fail('信息不完整')
+        this.success(0, '信息不完整')
     } else {
       this.success(1, '信息完整')
     }
