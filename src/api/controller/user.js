@@ -12,10 +12,9 @@ module.exports = class extends Base {
       this.fail();
     }
 
-    await this.model('user').where({id}).update({avatarUrl: avatarUrl})
+    await this.model('user').where({id}).update({avatar: avatarUrl})
     this.success()
   }
-
 
   async getuserlevelinfoAction() {
     const userId = this.post('userId')

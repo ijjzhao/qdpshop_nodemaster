@@ -8,9 +8,9 @@ module.exports = class extends Base {
     let id = this.get('id')
     let demand = await this.model('demand').where({ id }).find()
     let user_id = demand.user_id
-    let userinfo = await this.model('user').where({ id: user_id }).field(['nickname', 'avatarUrl']).find()
+    let userinfo = await this.model('user').where({ id: user_id }).field(['nickname', 'avatar']).find()
     demand.nickname = userinfo.nickname;
-    demand.avatarUrl = userinfo.avatarUrl;
+    demand.avatarUrl = userinfo.avatar;
     this.success({ demand })
   }
 
@@ -28,9 +28,10 @@ module.exports = class extends Base {
     for (let i in list) {
       let user_id = list[i].user_id;
       if (!map[user_id]) {
-        map[user_id] = await this.model('user').where({ id: user_id }).field(['id', 'nickname', 'avatarUrl']).find()
+        map[user_id] = await this.model('user').where({ id: user_id }).field(['id', 'nickname', 'avatar']).find()
         let userinfo = await this.model('user_info').where({ user_id }).find();
         map[user_id].age = userinfo.age
+        map[user_id].avatarUrl = map[user_id].avatar
       } else {
         if (!map[user_id].age) {
           let userinfo = await this.model('user_info').where({ user_id }).find();
