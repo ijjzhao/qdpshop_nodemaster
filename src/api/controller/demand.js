@@ -19,7 +19,7 @@ module.exports = class extends Base {
     const page = this.get('page') || 0;
     const isCustomer = this.get('isCustomer') || 0;
     let whereJson = {}
-    if (isCustomer) {
+    if (isCustomer == 1) {
       whereJson.user_id = user_id
     }
     // let list = await this.model('demand').where(whereJson).order([`status`]).page(page, pageCount).select();
